@@ -13,7 +13,7 @@ class DPVDrawer extends StatelessWidget {
           DrawerHeader(
             decoration: const BoxDecoration(color: Color.fromRGBO(32, 86, 223, 1)),
             child: Column(
-              children: [
+              children: <Widget>[
                 Image.asset(
                   'lib/assets/DPV_Lilie.png',
                   width: 100,
@@ -31,7 +31,9 @@ class DPVDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Fahrten"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushReplacementNamed(context, "/home");
+            },
           ),
           ListTile(
             title: const Text("Verlauf"),

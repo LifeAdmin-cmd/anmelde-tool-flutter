@@ -9,7 +9,7 @@ class DPVAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: const Color.fromRGBO(32, 86, 223, 1),
       iconTheme: const IconThemeData(color: Colors.white),
-      actions: const [
+      actions: const <Widget>[
         Padding(
           padding: EdgeInsets.all(10),
           child: Image(
