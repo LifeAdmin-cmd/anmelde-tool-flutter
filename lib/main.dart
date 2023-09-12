@@ -19,7 +19,7 @@ class Main extends StatelessWidget {
       ),
       // home: const Home(title: 'DPV Anmelde-Tool'),
       routes: {
-        '/': (context) => const Loading(),
+        '/': (context) => const Home(),
         '/home': (context) => const Home()
       },
     );
