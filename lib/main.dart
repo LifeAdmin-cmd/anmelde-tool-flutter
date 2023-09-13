@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:galaxias_anmeldetool/screens/future_fahrten.dart';
 import 'package:galaxias_anmeldetool/screens/home.dart';
-import 'package:galaxias_anmeldetool/screens/loading.dart';
+import 'package:galaxias_anmeldetool/screens/vergangene_fahrten.dart';
 
 void main() {
   runApp(const Main());
@@ -11,6 +12,7 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'DPV Anmelde-Tool',
       theme: ThemeData(
@@ -20,7 +22,9 @@ class Main extends StatelessWidget {
       // home: const Home(title: 'DPV Anmelde-Tool'),
       routes: {
         '/': (context) => const Home(),
-        '/home': (context) => const Home()
+        '/home': (context) => const Home(),
+        '/vergangeneFahrten': (context) => const VergangeneFahrten(),
+        '/futureFahrten': (context) => const FutureFahrten(),
       },
     );
   }

@@ -37,11 +37,15 @@ class DPVDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Vergangene Fahrten"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushReplacementNamed(context, "/vergangeneFahrten");
+            },
           ),
           ListTile(
             title: const Text("Zukünftige Fahrten"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushReplacementNamed(context, "/futureFahrten");
+            },
           )
         ],
       ),

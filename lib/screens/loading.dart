@@ -19,6 +19,8 @@ class _LoadingState extends State<Loading> {
     //   'time': instance.time,
     //   'isDayTime': instance.isDayTime,
     // });
+
+    // TODO handle delay problem
     await Future.delayed(const Duration(seconds: 2));
 
     Navigator.pushReplacementNamed(context, '/home');
