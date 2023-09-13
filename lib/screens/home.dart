@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaxias_anmeldetool/screens/loading.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
@@ -6,7 +7,7 @@ import 'package:galaxias_anmeldetool/widgets/dpv_drawer.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -15,6 +16,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<dynamic> jsonData = []; // To store the JSON data
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -22,14 +25,17 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchData() async {
+    isLoading = true;
     // Make the API call and parse the JSON response
     final response = await http.get(Uri.parse('https://anmelde-tool.free.beeceptor.com/fahrten'));
 
     if (response.statusCode == 200) {
+      isLoading = false;
       setState(() {
         jsonData = json.decode(response.body);
       });
     } else {
+      isLoading = false;
       throw Exception('Failed to load data from the API');
     }
   }
@@ -37,49 +43,50 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const DPVAppBar(title: "Anstehende Fahrten",),
+      appBar: const DPVAppBar(title: "Anstehende Fahrten"),
       drawer: const DPVDrawer(),
-      body: Center(
+      body: isLoading ? const Loading() : Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 8.0,),
+            const SizedBox(height: 8.0),
             Expanded(
               child: ListView.builder(
                 itemCount: jsonData.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = jsonData[index];
                   // Create a tile for each object in the JSON data
-                  return Column(
-                    children: [
-                      const SizedBox(height: 8.0,),
-                      Card(
-                        color: Colors.grey[200],
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 150,
-                              child: ListTile(
-                                trailing: const Icon(Icons.edit),
-                                title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      color: Colors.grey[200],
+                      child: Column(
+                        children: [
+                          ListTile(
+                            trailing: const Icon(Icons.edit),
+                            title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(item['shortDescription']),
+                                const SizedBox(height: 20.0), // Add spacing between main content and dates
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(item['shortDescription']),
-                                    Text("Von ${DateFormat('d.M.y').format(DateTime.parse(item['startDate']))} bis ${DateFormat('d.M.y').format(DateTime.parse(item['endDate']))}"),
+                                    Text("Von ${DateFormat('d.M.y').format(DateTime.parse(item['startDate'] ))} bis ${DateFormat('d.M.y').format(DateTime.parse(item['endDate']))}"),
                                   ],
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 15.0,),
+            const SizedBox(height: 15.0),
           ],
         ),
       ),
