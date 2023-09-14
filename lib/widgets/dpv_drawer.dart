@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class DPVDrawer extends StatelessWidget {
 
@@ -14,8 +15,8 @@ class DPVDrawer extends StatelessWidget {
             decoration: const BoxDecoration(color: Color.fromRGBO(32, 86, 223, 1)),
             child: Column(
               children: <Widget>[
-                Image.asset(
-                  'lib/assets/DPV_Lilie.png',
+                SvgPicture.asset(
+                  'lib/assets/DPV_Lilie.svg',
                   width: 100,
                   height: 100,
                 ),
