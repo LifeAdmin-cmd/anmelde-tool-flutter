@@ -49,14 +49,14 @@ class _LoadingState extends State<Loading> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
+              padding: EdgeInsets.fromLTRB(70, 0, 70, imageSize/8),
               child: SvgPicture.asset(
                 'lib/assets/DPV_Lilie.svg',
                 width: imageSize,
                 height: imageSize,
               ),
             ),
-            // const SizedBox(height: 8.0,),
+            // const SizedBox(height: 25.0,),
             const SpinKitRing(
               color: Colors.white,
               size: 50.0,
