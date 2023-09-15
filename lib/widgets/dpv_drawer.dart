@@ -52,13 +52,43 @@ class DPVDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text("Vergangene Fahrten"),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Vergangene Fahrten"),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text("5"),
+                  ),
+                )
+              ],
+            ),
             onTap: () {
               Navigator.pushReplacementNamed(context, "/vergangeneFahrten");
             },
           ),
           ListTile(
-            title: const Text("Zukünftige Fahrten"),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Zukünftige Fahrten"),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text("0"),
+                  ),
+                )
+              ],
+            ),
             onTap: () {
               Navigator.pushReplacementNamed(context, "/futureFahrten");
             },
