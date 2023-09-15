@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/svg.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -19,6 +20,8 @@ class _LoadingState extends State<Loading> {
     //   'time': instance.time,
     //   'isDayTime': instance.isDayTime,
     // });
+
+    // TODO handle delay problem
     await Future.delayed(const Duration(seconds: 2));
 
     Navigator.pushReplacementNamed(context, '/home');
@@ -46,14 +49,14 @@ class _LoadingState extends State<Loading> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(70, 0, 70, 0),
-              child: Image(
-                image: const AssetImage('lib/assets/DPV_Lilie.png',),
-                height: imageSize,
+              padding: EdgeInsets.fromLTRB(70, 0, 70, imageSize/8),
+              child: SvgPicture.asset(
+                'lib/assets/DPV_Lilie.svg',
                 width: imageSize,
+                height: imageSize,
               ),
             ),
-            // const SizedBox(height: 8.0,),
+            // const SizedBox(height: 25.0,),
             const SpinKitRing(
               color: Colors.white,
               size: 50.0,
