@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaxias_anmeldetool/screens/fahrten_ansicht.dart';
 import 'package:intl/intl.dart';
 
 
@@ -69,6 +70,11 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                     child: OutlinedButton(
                                       onPressed: () {
                                         // TODO add info page template for Fahrten
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => FahrtenAnsicht(fahrtenData: item),
+                                          ),
+                                        );
                                       },
                                       style: OutlinedButton.styleFrom(
                                         backgroundColor: Colors.green[700],
