@@ -29,8 +29,8 @@ class _FahrtenCardsState extends State<FahrtenCards> {
   Future<void> fetchData() async {
     isLoading = true;
     // Make the API call and parse the JSON response
-    // final response = await http.get(Uri.parse('https://anmelde-tool.free.beeceptor.com/fahrten'));
-    final response = await http.get(Uri.parse('http://localhost:3001/einladungen'));
+    // TODO update to production URL
+    final response = await http.get(Uri.parse('http://185.223.29.19:8080/fahrten'));
 
     if (response.statusCode == 200) {
       isLoading = false;

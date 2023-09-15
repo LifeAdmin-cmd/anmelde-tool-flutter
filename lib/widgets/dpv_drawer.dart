@@ -31,7 +31,22 @@ class DPVDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text("Aktive Anmeldephase"),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Aktive Anmeldephase"),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text("0"),
+                  ),
+                )
+              ],
+            ),
             onTap: () {
               Navigator.pushReplacementNamed(context, "/home");
             },
