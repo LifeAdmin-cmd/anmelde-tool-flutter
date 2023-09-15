@@ -29,6 +29,7 @@ class _FahrtenCardsState extends State<FahrtenCards> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
+                  // show dynamic error text
                   widget.nullText,
                   style: const TextStyle(
                     fontSize: 20,
