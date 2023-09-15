@@ -41,9 +41,9 @@ class DPVDrawer extends StatelessWidget {
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                    child: Text("0"),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text(categoryCount[''] != null ? categoryCount[''].toString() : "0"), // TODO add correct category
                   ),
                 )
               ],
@@ -62,9 +62,9 @@ class DPVDrawer extends StatelessWidget {
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                    child: Text("5"),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text(categoryCount['expired'] != null ? categoryCount['expired'].toString() : "0"),
                   ),
                 )
               ],
@@ -83,9 +83,9 @@ class DPVDrawer extends StatelessWidget {
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                    child: Text("0"),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Text(categoryCount[''] != null ? categoryCount[''].toString() : "0"), // TODO add correct category
                   ),
                 )
               ],
