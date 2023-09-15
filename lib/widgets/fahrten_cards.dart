@@ -6,8 +6,9 @@ import 'package:intl/intl.dart';
 class FahrtenCards extends StatefulWidget {
   final String category;
   final List<dynamic> data;
+  final String nullText;
 
-  const FahrtenCards({Key? key, required this.category, required this.data}) : super(key: key);
+  const FahrtenCards({Key? key, required this.category, required this.data, required this.nullText}) : super(key: key);
 
   @override
   _FahrtenCardsState createState() => _FahrtenCardsState();
@@ -21,16 +22,19 @@ class _FahrtenCardsState extends State<FahrtenCards> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          widget.data.isEmpty ? const Column(
+          widget.data.isEmpty ? Column(
             children: [
-              Icon(Icons.warning_amber_rounded, size: 85,),
-              SizedBox(height: 8.0,),
-              Text(
-                "Du bist aktuell zu keiner Veranstaltung eingeladen",
-                style: TextStyle(
-                  fontSize: 20,
+              const Icon(Icons.warning_amber_rounded, size: 85,),
+              const SizedBox(height: 8.0,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.nullText,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ) : Expanded(
@@ -46,7 +50,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                     child: Column(
                       children: [
                         ListTile(
-                          // trailing: const Icon(Icons.edit),
                           title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,9 +62,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                   Text("Von ${DateFormat('d.M.y').format(DateTime.parse(item['startDate'] ))} bis ${DateFormat('d.M.y').format(DateTime.parse(item['endDate']))}"),
                                 ],
                               ),
-                              // const Divider(
-                              //   height: 15.0,
-                              // ),
                               const SizedBox(height: 15.0,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -114,6 +114,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
   }
 }
 
-// TODO handle asynchronous suspension error -> after clicking through pages quickly
-// TODO infinite loadingScreen on Android -> might be fixed
+// TODO handle asynchronous suspension error -> after clicking through pages quickly // probably fixed
+// TODO infinite loadingScreen on Android // might be fixed
 // TODO change "Edit" button according to category -> category "expired" should just have an "information" button

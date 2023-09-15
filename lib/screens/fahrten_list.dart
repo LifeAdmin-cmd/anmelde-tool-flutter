@@ -24,9 +24,23 @@ class _FahrtenListState extends State<FahrtenList> {
 
   bool isLoading = true;
 
+  late String nullText;
+
+  void setNullText() {
+    switch (widget.category) {
+      case ('future'):
+        nullText = "Es sind noch keine Fahrten für die Zukunft geplant";
+      case ('expired'):
+        nullText = "Es liegen noch keine Fahrten in der Vergangenheit";
+      case ('active'):
+        nullText = "Du bist aktuell zu keiner Veranstaltung eingeladen";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    setNullText();
     fetchData();
   }
 
@@ -67,7 +81,7 @@ class _FahrtenListState extends State<FahrtenList> {
       drawer: isLoading ? const Loading() : DPVDrawer(categoryCount: categoryCount),
       body: isLoading
           ? const Loading()
-          : FahrtenCards(category: widget.category, data: jsonData), // Pass jsonData to FahrtenCards
+          : FahrtenCards(category: widget.category, data: jsonData, nullText: nullText,), // Pass jsonData to FahrtenCards
     );
   }
 }

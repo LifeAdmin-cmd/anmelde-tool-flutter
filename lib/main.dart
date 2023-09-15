@@ -19,9 +19,9 @@ class Main extends StatelessWidget {
       ),
       // home: const Home(title: 'DPV Anmelde-Tool'),
       routes: {
-        '/': (context) => const FahrtenList(category: '', title: 'Aktive Anmeldephase'), // TODO add correct category
+        '/': (context) => const FahrtenList(category: 'active', title: 'Aktive Anmeldephase'), // TODO change to correct category
         '/vergangeneFahrten': (context) => const FahrtenList(category: 'expired', title: 'Vergangene Fahrten'),
-        '/futureFahrten': (context) => const FahrtenList(category: '', title: 'Zukünftige Fahrten'), // TODO add correct category
+        '/futureFahrten': (context) => const FahrtenList(category: 'future', title: 'Zukünftige Fahrten'), // TODO change to correct category
       },
     );
   }
