@@ -11,26 +11,9 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
 
-  void setupWorldTime() async {
-    // WorldTime instance = WorldTime(location: "Europe/Berlin", flag: "germany.png");
-    // await instance.getTime();
-    // Navigator.pushReplacementNamed(context, '/home', arguments: {
-    //   'location': instance.location,
-    //   'flag': instance.flag,
-    //   'time': instance.time,
-    //   'isDayTime': instance.isDayTime,
-    // });
-
-    // TODO handle delay problem
-    await Future.delayed(const Duration(seconds: 2));
-
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-
   @override
   void initState() {
     super.initState();
-    setupWorldTime();
   }
 
   @override

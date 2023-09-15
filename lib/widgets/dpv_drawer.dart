@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class DPVDrawer extends StatelessWidget {
+  final Map<String, int> categoryCount;
 
-  const DPVDrawer({super.key});
+  const DPVDrawer({super.key, required this.categoryCount});
 
   @override
   Widget build(BuildContext context) {

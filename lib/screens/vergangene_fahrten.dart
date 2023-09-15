@@ -16,7 +16,9 @@ class VergangeneFahrten extends StatefulWidget {
 class _VergangeneFahrtenState extends State<VergangeneFahrten> {
   final String category = "expired";
 
-  List<dynamic> jsonData = []; // To store the JSON data
+  late List<dynamic> jsonData = []; // To store the JSON data
+
+  late Map<String, int> categoryCount;
 
   bool isLoading = true;
 
@@ -26,6 +28,7 @@ class _VergangeneFahrtenState extends State<VergangeneFahrten> {
     fetchData(); // Call the API when the widget is first created
   }
 
+  // function to fetch data
   Future<void> fetchData() async {
     // Make the API call and parse the JSON response
     // TODO update to production URL
@@ -34,8 +37,8 @@ class _VergangeneFahrtenState extends State<VergangeneFahrten> {
     if (response.statusCode == 200) {
       setState(() {
         final List<dynamic> allData = json.decode(response.body);
-        final List<dynamic> categoryData =
-        allData.where((item) => item['status'] == category).toList();
+        final List<dynamic> categoryData = allData.where((item) => item['status'] == category).toList();
+        categoryCount = countStatusValues(allData);
         jsonData = categoryData;
         isLoading = false; // Set isLoading to false when data is loaded
       });
@@ -45,11 +48,21 @@ class _VergangeneFahrtenState extends State<VergangeneFahrten> {
     }
   }
 
+  // Function to count status values
+  Map<String, int> countStatusValues(List<dynamic> data) {
+    Map<String, int> counts = {};
+    for (var item in data) {
+      final status = item['status'] as String;
+      counts[status] = (counts[status] ?? 0) + 1;
+    }
+    return counts;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DPVAppBar(title: "Vergangene Fahrten"),
-      drawer: const DPVDrawer(),
+      drawer: DPVDrawer(categoryCount: categoryCount),
       body: isLoading
           ? const Loading()
           : FahrtenCards(category: category, data: jsonData), // Pass jsonData to FahrtenCards
