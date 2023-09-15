@@ -48,7 +48,7 @@ class DPVDrawer extends StatelessWidget {
               ],
             ),
             onTap: () {
-              Navigator.pushReplacementNamed(context, "/home");
+              Navigator.pushReplacementNamed(context, "/");
             },
           ),
           ListTile(
