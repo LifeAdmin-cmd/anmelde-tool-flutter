@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:galaxias_anmeldetool/screens/future_fahrten.dart';
-import 'package:galaxias_anmeldetool/screens/home.dart';
-import 'package:galaxias_anmeldetool/screens/vergangene_fahrten.dart';
+import 'package:galaxias_anmeldetool/screens/fahrten_list.dart';
 
 void main() {
   runApp(const Main());
@@ -21,10 +19,9 @@ class Main extends StatelessWidget {
       ),
       // home: const Home(title: 'DPV Anmelde-Tool'),
       routes: {
-        '/': (context) => const Home(),
-        '/home': (context) => const Home(),
-        '/vergangeneFahrten': (context) => const VergangeneFahrten(),
-        '/futureFahrten': (context) => const FutureFahrten(),
+        '/': (context) => const FahrtenList(category: '', title: 'Aktive Anmeldephase'), // TODO add correct category
+        '/vergangeneFahrten': (context) => const FahrtenList(category: 'expired', title: 'Vergangene Fahrten'),
+        '/futureFahrten': (context) => const FahrtenList(category: '', title: 'Zukünftige Fahrten'), // TODO add correct category
       },
     );
   }
