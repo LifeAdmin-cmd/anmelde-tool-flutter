@@ -188,6 +188,74 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                       ),
                     )
                   ),
+
+                  // Preise und Anmeldeoptionen
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Preise & Optionen",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            child: Column( // Wrap with Column
+                              children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: fahrtenData['bookingOptions'].length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final item = fahrtenData['bookingOptions'][index];
+                                    // build Price cards
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 2.0),
+                                      child: Card(
+                                        color: Colors.grey[300],
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              const Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                                    child: Icon(Icons.person, size: 18,),
+                                                  )
+                                                ],
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
+                                                      const Text(" - "),
+                                                      Text(item['price'] + "€"),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
                 ],
               ),
             ),
