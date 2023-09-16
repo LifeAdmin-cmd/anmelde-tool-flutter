@@ -14,14 +14,14 @@ class FahrtenAnsicht extends StatefulWidget {
 class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
   Map<String, dynamic> get fahrtenData => widget.fahrtenData;
 
-  Widget getIcon() {
-    // TODO add logic to determine if X or Check Icon should be applied
-    return const CheckIcon();
-  }
-
   @override
   Widget build(BuildContext context) {
-    DateTime startDate = DateTime.parse(fahrtenData['startDate']);
+    DateTime eventStart = DateTime.parse(fahrtenData['startDate']);
+    DateTime eventEnd = DateTime.parse(fahrtenData['endDate']);
+    DateTime registrationStart =
+        DateTime.parse(fahrtenData['registrationStart']);
+    DateTime registrationEnd =
+        DateTime.parse(fahrtenData['registrationDeadline']);
 
     return Scaffold(
       appBar: const DPVAppBar(title: 'Anmeldung'),
@@ -50,33 +50,25 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                 ),
                               ),
                             ),
-                            Row(
-                              // TODO refactor so it can be reused for all 4 phases
-                              children: [
-                                const Column(
-                                  children: [
-                                    CheckIcon(),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Anmeldephase",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      // TODO Times all at 16:00, look if it's wrong in the response data or the formatting
-                                      Text("Start: ${DateFormat("d. MMM -").add_Hm().format(startDate)} Uhr "
-                                          "(${startDate.isBefore(DateTime.now()) ? "Vor" : "In"} ${startDate.difference(DateTime.now()).inDays  .abs()} Tagen)"
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
+                            PhaseInfoWidget(
+                              phase: 'Anmeldephase', 
+                              date: registrationStart,
+                              startOrEnde: 'Start',
+                            ),
+                            PhaseInfoWidget(
+                              phase: 'Anmeldephase',
+                              date: registrationEnd,
+                              startOrEnde: 'Ende',
+                            ),
+                            PhaseInfoWidget(
+                              phase: 'Veranstaltungstermin',
+                              date: eventStart,
+                              startOrEnde: 'Start',
+                            ),
+                            PhaseInfoWidget(
+                              phase: 'Veranstaltungstermin',
+                              date: eventEnd,
+                              startOrEnde: 'Ende',
                             ),
                           ],
                         ),
@@ -89,7 +81,6 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
           ],
         ),
       ),
-
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Row(
@@ -119,16 +110,98 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
   }
 }
 
-class CheckIcon extends StatelessWidget {
+class PhaseInfoWidget extends StatelessWidget {
+  final String phase;
+  final DateTime date;
+  final String startOrEnde;
+
+  const PhaseInfoWidget({
+    super.key,
+    required this.phase,
+    required this.date,
+    required this.startOrEnde,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget getIcon(DateTime date, String phase, String startOrEnde) {
+      DateTime now = DateTime.now();
+      bool anmeldephase = phase == 'Anmeldephase' ? true : false;
+      bool start = startOrEnde == 'Start' ? true : false;
+
+      if (now.isBefore(date)) {
+        return RoundIcon(
+          iconData: Icons.schedule_outlined,
+          backgroundColor: Colors.amber.shade600,
+        );
+      } else if (now.isAfter(date) && anmeldephase && !start) {
+          return RoundIcon(
+            iconData: Icons.close,
+            backgroundColor: Colors.grey.shade700,
+          );
+      } else if (now.isAfter(date)) {
+        return const RoundIcon(
+          iconData: Icons.check,
+          backgroundColor: Colors.green,
+        );
+      }
+
+      return RoundIcon(
+        iconData: Icons.error_outline,
+        backgroundColor: Colors.orange.shade700,
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Row(
+        children: [
+          Column(
+            children: [
+              getIcon(date, phase, startOrEnde),
+            ],
+          ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      phase,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                        // TODO Times all at 16:00, look if it's wrong in the response data or the formatting
+                        "$startOrEnde: ${DateFormat("d. MMM -").add_Hm().format(date)} Uhr "
+                        "(${date.isBefore(DateTime.now()) ? "Vor" : "In"} ${date.difference(DateTime.now()).inDays.abs()} Tagen)"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RoundIcon extends StatelessWidget {
   final IconData iconData;
   final double iconSize;
   final Color iconColor;
   final double circleRadius;
+  final Color backgroundColor;
 
-  const CheckIcon({super.key,
-    this.iconData = Icons.check,
+  const RoundIcon({
+    super.key,
+    required this.iconData,
     this.iconSize = 20.0,
     this.iconColor = Colors.white,
+    this.backgroundColor = const Color.fromRGBO(101, 220, 0, 1.0),
     this.circleRadius = 20.0,
   });
 
@@ -138,37 +211,7 @@ class CheckIcon extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: CircleAvatar(
         radius: circleRadius,
-        backgroundColor: const Color.fromRGBO(101, 220, 0, 1.0),
-        child: Icon(
-          iconData,
-          size: iconSize,
-          color: iconColor,
-        ),
-      ),
-    );
-  }
-}
-
-class XIcon extends StatelessWidget {
-  final IconData iconData;
-  final double iconSize;
-  final Color iconColor;
-  final double circleRadius;
-
-  const XIcon({super.key,
-    this.iconData = Icons.close,
-    this.iconSize = 25.0,
-    this.iconColor = Colors.white,
-    this.circleRadius = 25.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: CircleAvatar(
-        radius: circleRadius,
-        backgroundColor: Colors.lightGreenAccent[700],
+        backgroundColor: backgroundColor,
         child: Icon(
           iconData,
           size: iconSize,
