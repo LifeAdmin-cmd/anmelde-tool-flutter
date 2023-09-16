@@ -24,7 +24,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
         DateTime.parse(fahrtenData['registrationDeadline']);
 
     return Scaffold(
-      appBar: const DPVAppBar(title: 'Anmeldung'),
+      appBar: const DPVAppBar(title: 'Übersicht'),
       body: SingleChildScrollView(
         child: Flex(
           direction: Axis.horizontal,
@@ -32,6 +32,46 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             Expanded(
               child: Column(
                 children: [
+
+                  // Title Cad
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+                    child: Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Column(
+                            children: [
+                              Icon(Icons.calendar_today_outlined),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${fahrtenData['name']}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17.0,
+                                ),
+                              ),
+                              Text(
+                                "${fahrtenData['shortDescription']}",
+                                style: const TextStyle(
+                                  // fontWeight: FontWeight.bold,
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   // Termine Card
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
