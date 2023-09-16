@@ -24,8 +24,6 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
     DateTime registrationEnd =
         DateTime.parse(fahrtenData['registrationDeadline']);
 
-    print(fahrtenData['longDescription']);
-
     return Scaffold(
       appBar: const DPVAppBar(title: 'Übersicht'),
       body: SingleChildScrollView(
@@ -87,7 +85,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               child: Text(
                                 'Termine',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -118,27 +116,75 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                     ),
                   ),
 
+                  // Location Card
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Ort",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0,),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Name:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text("Beschr.:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text("Straße:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text("PLZ:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(fahrtenData['location']['name']),
+                                    // TODO find solution to overflow problem
+                                    Text(fahrtenData['location']['description'],),
+                                    Text(fahrtenData['location']['address']),
+                                    Text("${fahrtenData['location']['zipCode']['zipCode']} ${fahrtenData['location']['zipCode']['city']}"),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   // Einladungstext Card
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Einladungstext",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17.0,
-                              ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Einladungstext",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0,
                             ),
-                            const SizedBox(height: 8.0,),
-                            Html(data: fahrtenData['longDescription']),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 8.0,),
+                          Html(data: fahrtenData['longDescription']),
+                        ],
                       ),
                     )
                   ),
@@ -266,10 +312,10 @@ class RoundIcon extends StatelessWidget {
   const RoundIcon({
     super.key,
     required this.iconData,
-    this.iconSize = 20.0,
+    this.iconSize = 18.0,
     this.iconColor = Colors.white,
     this.backgroundColor = const Color.fromRGBO(101, 220, 0, 1.0),
-    this.circleRadius = 20.0,
+    this.circleRadius = 18.0,
   });
 
   @override
