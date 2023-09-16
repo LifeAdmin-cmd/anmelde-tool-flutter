@@ -32,10 +32,9 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             Expanded(
               child: Column(
                 children: [
-
                   // Title Cad
                   Card(
-                    margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+                    margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
                     child: Row(
                       children: [
                         const Padding(
@@ -74,7 +73,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
 
                   // Termine Card
                   Card(
-                    margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
+                    margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
                     child: Row(
                       children: [
                         Column(
@@ -91,7 +90,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               ),
                             ),
                             PhaseInfoWidget(
-                              phase: 'Anmeldephase', 
+                              phase: 'Anmeldephase',
                               date: registrationStart,
                               startOrEnde: 'Start',
                             ),
@@ -114,6 +113,32 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                         ),
                       ],
                     ),
+                  ),
+
+                  // Einladungstext Card
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Einladungstext",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.0,
+                              ),
+                            ),
+                            const SizedBox(height: 8.0,),
+                            // TODO handle HTML Tags
+                            Text(fahrtenData['longDescription']),
+                          ],
+                        ),
+                      ),
+                    )
                   ),
                 ],
               ),
