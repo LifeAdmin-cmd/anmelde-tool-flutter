@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 
 class FahrtenAnsicht extends StatefulWidget {
@@ -22,6 +23,8 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
         DateTime.parse(fahrtenData['registrationStart']);
     DateTime registrationEnd =
         DateTime.parse(fahrtenData['registrationDeadline']);
+
+    print(fahrtenData['longDescription']);
 
     return Scaffold(
       appBar: const DPVAppBar(title: 'Übersicht'),
@@ -133,8 +136,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               ),
                             ),
                             const SizedBox(height: 8.0,),
-                            // TODO handle HTML Tags
-                            Text(fahrtenData['longDescription']),
+                            Html(data: fahrtenData['longDescription']),
                           ],
                         ),
                       ),
