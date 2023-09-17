@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class FahrtenAnmeldung extends StatefulWidget {
   const FahrtenAnmeldung({super.key});
@@ -10,7 +11,7 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +21,12 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: Form(
+          child: FormBuilder(
             key: _formKey,
             child: Column(
               children: [
-                const BuchstabenInput(labelText: "Vorname"),
-                const BuchstabenInput(labelText: "Nachname"),
+                const BuchstabenInput(labelText: "Vorname", idName: "vorname",),
+                const BuchstabenInput(labelText: "Nachname", idName: "nachname",),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
@@ -38,13 +39,13 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
                           ),
                           onPressed: () {
                             // Validate the form when the button is pressed
-                            if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                               // Form is valid, proceed with your logic
-                              print("Submitted");
-                              print(_formKey.currentState);
+                              debugPrint("Submitted");
+                              debugPrint(_formKey.currentState?.instantValue.toString());
                             }
                           },
-                          child: const Text('Weiter', style: TextStyle(color: Colors.white),),
+                          child: const Text('Anmelden', style: TextStyle(color: Colors.white),),
                         ),
                       ),
                     ],
@@ -63,10 +64,12 @@ class BuchstabenInput extends StatefulWidget {
   final String labelText;
   final String regex;
   final String regexError;
+  final String idName;
 
   const BuchstabenInput({
     super.key,
     required this.labelText,
+    required this.idName,
     this.regex = r'^[A-Za-z\s\u00C0-\u024F]+$',
     this.regexError = "Ungültige Eingabe. Nur Buchstaben erlaubt.",
   });
@@ -80,7 +83,8 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: TextFormField(
+      child: FormBuilderTextField(
+        name: widget.idName,
         decoration: InputDecoration(
           labelText: widget.labelText,
         ),
