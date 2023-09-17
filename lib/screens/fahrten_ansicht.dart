@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
+import 'package:galaxias_anmeldetool/screens/fahrten_anmeldung.dart';
 
 class FahrtenAnsicht extends StatefulWidget {
   final Map<String, dynamic> fahrtenData;
@@ -272,6 +273,11 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             FloatingActionButton.extended(
               onPressed: () {
                 // TODO Anmelde-Prozess starten
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FahrtenAnmeldung(),
+                  ),
+                );
               },
               label: const Text(
                 'Anmelden',
