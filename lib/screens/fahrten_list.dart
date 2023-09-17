@@ -47,7 +47,7 @@ class _FahrtenListState extends State<FahrtenList> {
   // function to fetch data
   Future<void> fetchData() async {
     // TODO update to production URL
-    final response = await http.get(Uri.parse('http://larskra.eu:2080/fahrten'));
+    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
 
     if (response.statusCode == 200) {
       setState(() {
