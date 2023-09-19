@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:galaxias_anmeldetool/widgets/form_widget.dart';
 
-class FahrtenAnmeldung extends StatefulWidget {
-  const FahrtenAnmeldung({super.key});
+
+class ModuleBuilder extends StatefulWidget {
+  final dynamic param1;
+  final dynamic param2;
+
+  const ModuleBuilder({super.key, required this.param1, required this.param2});
 
   @override
-  State<FahrtenAnmeldung> createState() => _FahrtenAnmeldungState();
+  State<ModuleBuilder> createState() => _ModuleBuilderState();
 }
 
-class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
+class _ModuleBuilderState extends State<ModuleBuilder> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const DPVAppBar(title: 'Anmeldung'),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Card(
-          color: Colors.grey[200],
-          child: const FormWidget(),
-        ),
-      ),
+    print("pageData: " + widget.param1.toString());
+    // print(widget.param2.toString());
+    return const Column(
+      children: [
+        BuchstabenInput(labelText: "Vorname", idName: "vorname",),
+        // BuchstabenInput(labelText: "Nachname", idName: "nachname",)
+      ],
     );
   }
 }
@@ -55,7 +55,7 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
           labelText: widget.labelText,
         ),
         validator: (value) {
-          if (value!.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Dieses Feld darf nicht leer sein.';
           }
           // Add regex pattern for Nachname validation here
