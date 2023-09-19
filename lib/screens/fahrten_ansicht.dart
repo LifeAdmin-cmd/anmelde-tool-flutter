@@ -145,7 +145,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                     Text("Name:", style: TextStyle(fontWeight: FontWeight.bold),),
                                     Text("Beschr.:", style: TextStyle(fontWeight: FontWeight.bold),),
                                     Text("Straße:", style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Text("PLZ:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text("Ort:", style: TextStyle(fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               ),
