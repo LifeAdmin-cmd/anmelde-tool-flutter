@@ -48,11 +48,14 @@ class _FormWidgetState extends State<FormWidget> {
     setState(() => _currentPosition = _validPosition(position));
   }
 
-  Widget _buildRow(List<Widget> widgets) {
+  Widget _buildRow(List<Widget> widgets, {
+    EdgeInsets padding = const EdgeInsets.only(bottom: 12.0),
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceAround,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: padding,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: mainAxisAlignment,
         children: widgets,
       ),
     );
@@ -63,21 +66,42 @@ class _FormWidgetState extends State<FormWidget> {
     return Column(
       children: [
         const SizedBox(
-          height: 10,
+          height: 15,
         ),
         _buildRow([
-          DotsIndicator(
-            dotsCount: _totalPages,
-            position: _currentPosition,
-            onTap: (position) {
-              setState(() => _currentPosition = position);
-            },
-            decorator: const DotsDecorator(
+          // DotsIndicator for previous dots (grey color)
+          _currentPosition > 0 ? DotsIndicator(
+            dotsCount: _currentPosition,
+            position: _currentPosition - 1,
+            decorator: DotsDecorator(
               size: Size.square(20.0),
               activeSize: Size(20.0, 20.0),
+              color: Colors.blue.shade200, // Set the default color for previous dots
+              activeColor: Colors.blue.shade200, // Set the same color for previous dots
+              activeShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
+              ),
+              spacing: EdgeInsets.all(8.0), // Adjust the spacing between dots as needed
+            ),
+          ) : Container(),
+
+          // DotsIndicator for the active dot (blue color)
+          DotsIndicator(
+            dotsCount: _totalPages - _currentPosition,
+            position: 0, // Start from the first dot
+            decorator: DotsDecorator(
+              size: Size.square(20.0),
+              activeSize: Size(20.0, 20.0),
+              color: Colors.grey, // Set the default color for dots above the active page
+              activeColor: Colors.blue.shade600, // Set the active color for the current page
+              activeShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
+              ),
+              spacing: EdgeInsets.all(8.0), // Adjust the spacing between dots as needed
             ),
           ),
-        ]),
+        ], mainAxisAlignment: MainAxisAlignment.center),
+        const Divider(),
         FormBuilder(
           key: formKeys[_currentPosition],
           initialValue: pageData[_currentPosition] ?? {},

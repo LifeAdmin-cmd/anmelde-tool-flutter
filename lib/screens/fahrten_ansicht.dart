@@ -59,6 +59,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                   fontSize: 17.0,
                                 ),
                               ),
+                              // TODO handle wrap long text error
                               Text(
                                 "${fahrtenData['shortDescription']}",
                                 style: const TextStyle(
