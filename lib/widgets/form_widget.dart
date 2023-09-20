@@ -5,21 +5,22 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:galaxias_anmeldetool/widgets/module_builder.dart';
 
 class FormWidget extends StatefulWidget {
-  const FormWidget({Key? key});
+  final dynamic fetchedData;
+  const FormWidget({super.key, required this.fetchedData});
 
   @override
   State<FormWidget> createState() => _FormWidgetState();
 }
 
 class _FormWidgetState extends State<FormWidget> {
-  final List<Map<String, dynamic>> moduleData = [
-    {"title": "Datenschutz", "param2": ""},
-    {"title": "value3", "param2": "value4"},
-    {"title": "value1", "param2": "value2"},
-    {"title": "value3", "param2": "value4"},
-    {"title": "value3", "param2": "value4"},
-    // Add data for more modules as needed
-  ];
+  // final List<Map<String, dynamic>> moduleData = [
+  //   {"title": "Datenschutz", "param2": ""},
+  //   {"title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis justo nec augue fringilla efficitur. Nullam ornare tortor.", "param2": "value4"},
+  //   {"title": "value1", "param2": "value2"},
+  //   {"title": "value3", "param2": "value4"},
+  //   {"title": "value3", "param2": "value4"},
+  //   // Add data for more modules as needed
+  // ];
 
   int _currentPosition = 0;
 
@@ -31,7 +32,7 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   void initState() {
     super.initState();
-    _totalPages = moduleData.length;
+    _totalPages = widget.fetchedData.length;
     formKeys = List.generate(
       _totalPages,
           (_) => GlobalKey<FormBuilderState>(),
@@ -63,12 +64,15 @@ class _FormWidgetState extends State<FormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final List<dynamic> moduleData = widget.fetchedData;
     print(pageData);
     return Column(
       children: [
         const SizedBox(
           height: 15,
         ),
+
+        // Navigation Dots
         _buildRow([
           // DotsIndicator for previous dots (grey color)
           _currentPosition > 0 ? DotsIndicator(
@@ -102,22 +106,29 @@ class _FormWidgetState extends State<FormWidget> {
             ),
           ),
         ], mainAxisAlignment: MainAxisAlignment.center),
+
+        // Horizontal Divider
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0),
           child: Divider(),
         ),
+
+
         FormBuilder(
           key: formKeys[_currentPosition],
           initialValue: pageData[_currentPosition] ?? {},
           child: ModuleBuilder(
             // title: pageData,
-            modules: moduleData[_currentPosition],
+            module: moduleData[_currentPosition],
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Divider(),
-        ),
+        // const Padding(
+        //   padding: EdgeInsets.all(12.0),
+        //   child: Divider(),
+        // ),
+
+        // Navigation Buttons
+        const SizedBox(height: 25,),
         _buildRow([
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -125,7 +136,12 @@ class _FormWidgetState extends State<FormWidget> {
               _currentPosition == 0 ? Colors.grey : Colors.red,
             ),
             onPressed: () {
-              _updatePosition(max(--_currentPosition, 0));
+              if (formKeys[_currentPosition].currentState != null &&
+              formKeys[_currentPosition].currentState!.validate()) {
+                pageData[_currentPosition] =
+                    formKeys[_currentPosition].currentState!.instantValue;
+                _updatePosition(max(--_currentPosition, 0));
+              }
             },
             child: const Text(
               'Zurück',

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:galaxias_anmeldetool/widgets/form_fields.dart';
 
 class ModuleBuilder extends StatefulWidget {
-  // final dynamic title;
-  final Map<String, dynamic> modules;
+  final Map<String, dynamic> module;
 
-  const ModuleBuilder({super.key, required this.modules});
+  const ModuleBuilder({super.key, required this.module});
 
   @override
   State<ModuleBuilder> createState() => _ModuleBuilderState();
@@ -14,7 +13,7 @@ class ModuleBuilder extends StatefulWidget {
 class _ModuleBuilderState extends State<ModuleBuilder> {
   Widget _buildRow(
     List<Widget> widgets, {
-    EdgeInsets padding = const EdgeInsets.only(bottom: 12.0),
+    EdgeInsets padding = const EdgeInsets.fromLTRB(12, 12, 12, 12),
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceAround,
   }) {
     return Padding(
@@ -26,118 +25,83 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
     );
   }
 
+  Widget getFormField(formField) {
+    print(formField);
+    switch (formField['type']) {
+      case "stringAttribute": {
+        return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
+      }
+      case "booleanAttribute": {
+        print("Is booleanAttribute");
+        // return InputSwitch(idName: 'accept', labelText: 'Akzeptieren', required: true,);
+        return InputSwitch(labelText: formField['label'], idName: formField['id'], required: formField['required'],);
+      }
+      case "integerAttribute": {
+        return Text("Placeholder");
+      }
+      case "floatAttribute": {
+        return Text("Placeholder");
+      }
+      case "dateTimeAttribute": {
+        return Text("Placeholder");
+      }
+      case "travelAttribute": {
+        return Text("Placeholder");
+      }
+    }
+
+    return const InputSwitch(idName: 'accept', labelText: 'Test failed', required: true,);
+  }
+
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> module = widget.module;
+    List<dynamic> inputFields = module['formFields'];
     // print("pageData: " + widget.modules.toString());
-    // print(widget.param2.toString());
+    print(inputFields);
     return Column(
       children: [
-        _buildRow(
-          [
-            Text(
-              "${widget.modules['title']}",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "${module['title']}",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
             ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.start,
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 22)
+          ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Divider(),
+
+        const Divider(indent: 50.0, endIndent: 50.0,),
+
+        Visibility(
+          visible: module['introText'] != "", // TODO maybe add error handling for missing value in json
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: Column(
+                children: [
+                  Text(module['introText']),
+                  const Divider(indent: 50.0, endIndent: 50.0,),
+                ],
+              ),
+            )
         ),
-        const BuchstabenInput(
-          labelText: "Vorname",
-          idName: "vorname",
-        ),
-        const BuchstabenInput(
-          labelText: "Nachname",
-          idName: "nachname",
-        ),
-        const InputSwitch(idName: 'accept', labelText: 'Akzeptieren', required: true,),
+
+
+        // Load FormFields dynamically
+        for(var field in inputFields)
+          getFormField(field)
+
+        // BuchstabenInput(
+        //   labelText: "Vorname",
+        //   idName: "vorname",
+        // ),
+        // BuchstabenInput(
+        //   labelText: "Nachname",
+        //   idName: "nachname",
+        // ),
+        // InputSwitch(idName: inputFields[0]['id'], labelText: inputFields[0]['label'], required: inputFields[0]['required'],),
       ],
     );
   }
 }
-
-class BuchstabenInput extends StatefulWidget {
-  final String labelText;
-  final String regex;
-  final String regexError;
-  final String idName;
-
-  const BuchstabenInput({
-    super.key,
-    required this.labelText,
-    required this.idName,
-    this.regex = r'^[A-Za-z\s\u00C0-\u024F]+$',
-    this.regexError = "Ungültige Eingabe. Nur Buchstaben erlaubt.",
-  });
-
-  @override
-  State<BuchstabenInput> createState() => _BuchstabenInputState();
-}
-
-class _BuchstabenInputState extends State<BuchstabenInput> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: FormBuilderTextField(
-        name: widget.idName,
-        decoration: InputDecoration(
-          labelText: widget.labelText,
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Dieses Feld darf nicht leer sein.';
-          }
-          // Add regex pattern for Nachname validation here
-          if (!RegExp(widget.regex).hasMatch(value)) {
-            return widget.regexError;
-          }
-          return null; // Return null for no validation errors
-        },
-      ),
-    );
-  }
-}
-
-class InputSwitch extends StatefulWidget {
-  final String labelText;
-  final String idName;
-  final bool required;
-
-  const InputSwitch({
-    super.key,
-    required this.labelText,
-    required this.idName,
-    required this.required,
-  });
-
-  @override
-  State<InputSwitch> createState() => _InputSwitchState();
-}
-
-class _InputSwitchState extends State<InputSwitch> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0,),
-      child: FormBuilderSwitch(
-        name: widget.idName,
-        title: Text(widget.labelText),
-        validator: (value) {
-          if(widget.required && value != null && !value) {
-            return "Diese Option ist erforderlich um fortzufahren";
-          }
-          return null;
-        },
-      ),
-    );
-  }
-}
-

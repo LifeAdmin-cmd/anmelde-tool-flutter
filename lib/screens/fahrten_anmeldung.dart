@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:galaxias_anmeldetool/screens/loading.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:galaxias_anmeldetool/widgets/form_widget.dart';
 
 class FahrtenAnmeldung extends StatefulWidget {
@@ -11,59 +13,40 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
+  List<dynamic> data = [];
+  late bool isLoading;
+
+  Future<void> fetchData() async {
+    isLoading = true;
+    final response = await http.get(Uri.parse('https://api.larskra.eu/modules'));
+    if (response.statusCode == 200) {
+      setState(() {
+        data = json.decode(response.body);
+        isLoading = false;
+      });
+    } else {
+      // TODO: Handle the error or show an error screen
+      isLoading = false;
+      throw Exception('Failed to load data from the API');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DPVAppBar(title: 'Anmeldung'),
-      body: Padding(
+      body: isLoading ? const Loading() : Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: const FormWidget(),
+          child: FormWidget(fetchedData: data),
         ),
-      ),
-    );
-  }
-}
-
-class BuchstabenInput extends StatefulWidget {
-  final String labelText;
-  final String regex;
-  final String regexError;
-  final String idName;
-
-  const BuchstabenInput({
-    super.key,
-    required this.labelText,
-    required this.idName,
-    this.regex = r'^[A-Za-z\s\u00C0-\u024F]+$',
-    this.regexError = "Ungültige Eingabe. Nur Buchstaben erlaubt.",
-  });
-
-  @override
-  State<BuchstabenInput> createState() => _BuchstabenInputState();
-}
-
-class _BuchstabenInputState extends State<BuchstabenInput> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: FormBuilderTextField(
-        name: widget.idName,
-        decoration: InputDecoration(
-          labelText: widget.labelText,
-        ),
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Dieses Feld darf nicht leer sein.';
-          }
-          // Add regex pattern for Nachname validation here
-          if (!RegExp(widget.regex).hasMatch(value)) {
-            return widget.regexError;
-          }
-          return null; // Return null for no validation errors
-        },
       ),
     );
   }
