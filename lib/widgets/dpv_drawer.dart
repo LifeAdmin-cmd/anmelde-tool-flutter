@@ -43,7 +43,7 @@ class DPVDrawer extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                    child: Text(categoryCount[''] != null ? categoryCount[''].toString() : "0"), // TODO add correct category
+                    child: Text(categoryCount['pending'] != null ? categoryCount['pending'].toString() : "0"), // TODO add correct category => done
                   ),
                 )
               ],

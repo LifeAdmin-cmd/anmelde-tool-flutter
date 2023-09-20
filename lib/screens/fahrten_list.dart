@@ -32,7 +32,7 @@ class _FahrtenListState extends State<FahrtenList> {
         nullText = "Es sind noch keine Fahrten für die Zukunft geplant";
       case ('expired'):
         nullText = "Es liegen noch keine Fahrten in der Vergangenheit";
-      case ('active'):
+      case ('pending'):
         nullText = "Du bist aktuell zu keiner Veranstaltung eingeladen";
     }
   }

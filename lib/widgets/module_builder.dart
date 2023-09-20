@@ -1,26 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-
 class ModuleBuilder extends StatefulWidget {
-  final dynamic param1;
-  final dynamic param2;
+  // final dynamic title;
+  final Map<String, dynamic> modules;
 
-  const ModuleBuilder({super.key, required this.param1, required this.param2});
+  const ModuleBuilder({super.key, required this.modules});
 
   @override
   State<ModuleBuilder> createState() => _ModuleBuilderState();
 }
 
 class _ModuleBuilderState extends State<ModuleBuilder> {
+  Widget _buildRow(
+    List<Widget> widgets, {
+    EdgeInsets padding = const EdgeInsets.only(bottom: 12.0),
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceAround,
+  }) {
+    return Padding(
+      padding: padding,
+      child: Row(
+        mainAxisAlignment: mainAxisAlignment,
+        children: widgets,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("pageData: " + widget.param1.toString());
+    // print("pageData: " + widget.modules.toString());
     // print(widget.param2.toString());
-    return const Column(
+    return Column(
       children: [
-        BuchstabenInput(labelText: "Vorname", idName: "vorname",),
-        // BuchstabenInput(labelText: "Nachname", idName: "nachname",)
+        _buildRow(
+          [
+            Text(
+              "${widget.modules['title']}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 22)
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          child: Divider(),
+        ),
+        const BuchstabenInput(
+          labelText: "Vorname",
+          idName: "vorname",
+        ),
+        const BuchstabenInput(
+          labelText: "Nachname",
+          idName: "nachname",
+        ),
+        const InputSwitch(idName: 'accept', labelText: 'Akzeptieren', required: true,),
       ],
     );
   }
@@ -68,3 +105,39 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
     );
   }
 }
+
+class InputSwitch extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+
+  const InputSwitch({
+    super.key,
+    required this.labelText,
+    required this.idName,
+    required this.required,
+  });
+
+  @override
+  State<InputSwitch> createState() => _InputSwitchState();
+}
+
+class _InputSwitchState extends State<InputSwitch> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0,),
+      child: FormBuilderSwitch(
+        name: widget.idName,
+        title: Text(widget.labelText),
+        validator: (value) {
+          if(widget.required && value != null && !value) {
+            return "Diese Option ist erforderlich um fortzufahren";
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
