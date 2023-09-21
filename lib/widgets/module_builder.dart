@@ -40,7 +40,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         return Text("Placeholder");
       }
       case "dateTimeAttribute": {
-        return Text("Placeholder");
+        return DateTimeInput(labelText: formField['label'], idName: formField['id']);
       }
       case "travelAttribute": {
         return Text("Placeholder");
