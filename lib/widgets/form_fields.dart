@@ -73,7 +73,7 @@ class _InputSwitchState extends State<InputSwitch> {
         // TODO overwrites the saving of the state
         // initialValue: widget.initialValue,
         validator: (value) {
-          print(value);
+          // print(value);
           // TODO when dynamic initialValue is implemented this needs to be changed
           if(widget.required && (value == null || !value)) {
             return "Diese Option ist erforderlich um fortzufahren";

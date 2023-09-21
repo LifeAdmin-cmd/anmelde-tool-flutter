@@ -273,7 +273,6 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             // TODO make ActionButton only visible when editing is possible
             FloatingActionButton.extended(
               onPressed: () {
-                // TODO Anmelde-Prozess starten
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const FahrtenAnmeldung(),

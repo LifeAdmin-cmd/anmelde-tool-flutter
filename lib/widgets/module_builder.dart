@@ -26,14 +26,11 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
   }
 
   Widget getFormField(formField) {
-    print(formField);
     switch (formField['type']) {
       case "stringAttribute": {
         return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
       }
       case "booleanAttribute": {
-        print("Is booleanAttribute");
-        // return InputSwitch(idName: 'accept', labelText: 'Akzeptieren', required: true,);
         return InputSwitch(labelText: formField['label'], idName: formField['id'], required: formField['required'],);
       }
       case "integerAttribute": {
@@ -58,7 +55,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
     Map<String, dynamic> module = widget.module;
     List<dynamic> inputFields = module['formFields'];
     // print("pageData: " + widget.modules.toString());
-    print(inputFields);
+    // print(inputFields);
     return Column(
       children: [
         Padding(
