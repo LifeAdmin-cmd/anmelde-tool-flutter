@@ -13,21 +13,35 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
-  List<dynamic> data = [];
+  List<dynamic> modules = [];
+  List<dynamic> genders = [];
+  List<dynamic> eatingHabits = [];
   late bool isLoading;
 
   Future<void> fetchData() async {
     isLoading = true;
-    final response = await http.get(Uri.parse('https://api.larskra.eu/modules'));
-    if (response.statusCode == 200) {
+
+    final List<http.Response> responses = await Future.wait([
+      http.get(Uri.parse('https://api.larskra.eu/modules')),
+      http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
+      http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
+    ]);
+
+    // Check if all responses have status code 200
+    final allResponsesSuccessful = responses.every((response) =>
+    response.statusCode == 200);
+
+    if (allResponsesSuccessful) {
       setState(() {
-        data = json.decode(response.body);
+        modules = json.decode(utf8.decode(responses[0].bodyBytes));
+        genders = json.decode(utf8.decode(responses[1].bodyBytes));
+        eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
         isLoading = false;
       });
     } else {
       // TODO: Handle the error or show an error screen
       isLoading = false;
-      throw Exception('Failed to load data from the API');
+      throw Exception('Failed to load data from one or more APIs');
     }
   }
 
@@ -45,7 +59,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: FormWidget(fetchedData: data),
+          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits,),
         ),
       ),
     );

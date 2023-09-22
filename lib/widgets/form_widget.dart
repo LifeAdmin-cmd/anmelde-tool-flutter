@@ -6,8 +6,10 @@ import 'package:galaxias_anmeldetool/screens/personen_form.dart';
 import 'package:galaxias_anmeldetool/widgets/module_builder.dart';
 
 class FormWidget extends StatefulWidget {
-  final dynamic fetchedData;
-  const FormWidget({super.key, required this.fetchedData});
+  final dynamic modules;
+  final dynamic genders;
+  final dynamic eatingHabits;
+  const FormWidget({super.key, required this.modules, required this.genders, required this.eatingHabits});
 
   @override
   State<FormWidget> createState() => _FormWidgetState();
@@ -24,7 +26,7 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   void initState() {
     super.initState();
-    _totalPages = widget.fetchedData.length;
+    _totalPages = widget.modules.length;
     formKeys = List.generate(
       _totalPages,
       (_) => GlobalKey<FormBuilderState>(),
@@ -57,7 +59,7 @@ class _FormWidgetState extends State<FormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> moduleData = widget.fetchedData;
+    final List<dynamic> moduleData = widget.modules;
     return Column(
       children: [
         const SizedBox(
@@ -123,7 +125,7 @@ class _FormWidgetState extends State<FormWidget> {
                     // title: pageData,
                     module: moduleData[_currentPosition],
                   )
-                : const PersonenForm()),
+                : PersonenForm(genders: widget.genders, eatingHabits: widget.eatingHabits)),
         // const Padding(
         //   padding: EdgeInsets.all(12.0),
         //   child: Divider(),

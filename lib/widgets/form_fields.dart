@@ -142,7 +142,7 @@ class DropdownInput extends StatefulWidget {
   final String idName;
   final bool required;
   final String placeholder;
-  final List<String> data;
+  final List<dynamic> data;
 
   const DropdownInput({
     Key? key,
@@ -158,8 +158,6 @@ class DropdownInput extends StatefulWidget {
 }
 
 class _DropdownInputState extends State<DropdownInput> {
-  String? _selectedValue; // To store the selected value
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -176,20 +174,78 @@ class _DropdownInputState extends State<DropdownInput> {
           FormBuilderDropdown<String>(
             name: widget.idName,
             items: widget.data
-                .map((value) => DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            ))
-                .toList(),
+                .map<DropdownMenuItem<String>>((dynamic value) {
+              final Map<String, dynamic> item = value as Map<String, dynamic>;
+              return DropdownMenuItem<String>(
+                value: item['id'].toString(), // Assuming 'value' is a string or can be converted to one
+                child: Text(item['name'].toString()), // Assuming 'name' is a string or can be converted to one
+              );
+            }).toList(),
             decoration: InputDecoration(
               hintText: widget.placeholder, // Display placeholder always
               border: const OutlineInputBorder(),
             ),
-            // onChanged: (value) {
-            //   setState(() {
-            //     _selectedValue = value;
-            //   });
-            // },
+            validator: (value) {
+              if (widget.required && (value == null || value.isEmpty)) {
+                return "Bitte wähle eine Option aus.";
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ChoiceInput extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+  final String placeholder;
+  final List<dynamic> data;
+
+  const ChoiceInput({
+    Key? key,
+    required this.labelText,
+    required this.idName,
+    required this.data,
+    this.required = true,
+    this.placeholder = "Bitte wählen ...", // Include the placeholder in the constructor
+  }) : super(key: key);
+
+  @override
+  State<ChoiceInput> createState() => _ChoiceInputState();
+}
+
+class _ChoiceInputState extends State<ChoiceInput> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.labelText, // Display labelText as a label above the dropdown
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          FormBuilderFilterChip(
+            name: widget.idName,
+            options: widget.data
+                .map<FormBuilderChipOption<String>>((dynamic value) {
+              final Map<String, dynamic> item = value as Map<String, dynamic>;
+              return FormBuilderChipOption<String>(
+                value: item['id'].toString(), // Assuming 'value' is a string or can be converted to one
+                child: Text(item['name'].toString()), // Assuming 'name' is a string or can be converted to one
+              );
+            }).toList(),
+            decoration: InputDecoration(
+              hintText: widget.placeholder, // Display placeholder always
+              border: const OutlineInputBorder(),
+            ),
             validator: (value) {
               if (widget.required && (value == null || value.isEmpty)) {
                 return "Bitte wähle eine Option aus.";
