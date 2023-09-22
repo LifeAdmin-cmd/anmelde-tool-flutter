@@ -25,6 +25,7 @@ class _PersonenFormState extends State<PersonenForm> {
               BuchstabenInput(labelText: "Fahrtenname", idName: "scoutName", required: false,),
               DateTimeInput(labelText: "Geburtsdatum", idName: "birthday"),
               // TODO Geschlecht
+              DropdownInput(labelText: "Geschlecht", idName: "gender", data: ["Männlich", "Weiblich", "Divers"]),
               // TODO Essensgewohnheiten
               BuchstabenInput(labelText: "Straße und Hausnummer", idName: "adress", regex: "",),
               BuchstabenInput(labelText: "Postleitzahl", idName: 'plz', regex: r'\b\d+\b', regexError: "Eine PLZ kann nur aus Zahlen bestehen",), // TODO anders als im Backend

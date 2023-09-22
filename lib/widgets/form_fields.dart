@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
@@ -130,6 +132,72 @@ class _DateTimeInputState extends State<DateTimeInput> {
           }
           return null;
         },
+      ),
+    );
+  }
+}
+
+class DropdownInput extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+  final String placeholder;
+  final List<String> data;
+
+  const DropdownInput({
+    Key? key,
+    required this.labelText,
+    required this.idName,
+    required this.data,
+    this.required = true,
+    this.placeholder = "Bitte wählen ...", // Include the placeholder in the constructor
+  }) : super(key: key);
+
+  @override
+  State<DropdownInput> createState() => _DropdownInputState();
+}
+
+class _DropdownInputState extends State<DropdownInput> {
+  String? _selectedValue; // To store the selected value
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.labelText, // Display labelText as a label above the dropdown
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          FormBuilderDropdown<String>(
+            name: widget.idName,
+            items: widget.data
+                .map((value) => DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            ))
+                .toList(),
+            decoration: InputDecoration(
+              hintText: widget.placeholder, // Display placeholder always
+              border: const OutlineInputBorder(),
+            ),
+            // onChanged: (value) {
+            //   setState(() {
+            //     _selectedValue = value;
+            //   });
+            // },
+            validator: (value) {
+              if (widget.required && (value == null || value.isEmpty)) {
+                return "Bitte wähle eine Option aus.";
+              }
+              return null;
+            },
+          ),
+        ],
       ),
     );
   }
