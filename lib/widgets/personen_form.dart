@@ -21,14 +21,6 @@ class PersonenForm extends StatefulWidget {
 }
 
 class _PersonenFormState extends State<PersonenForm> {
-  // List<Map<String, dynamic>> registeredPersons = [];
-
-  // void _notifyPersonsChange() {
-  //   if (widget.onPersonsRegistered != null) {
-  //     widget.onPersonsRegistered(registeredPersons);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context);

@@ -58,15 +58,6 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
           }
           personsProvider.addSavedPerson(person);
         }
-
-        // print(widget.fahrtenId.runtimeType);
-        // print(widget.bookingOptions);
-        // for (final entry in fetchedPersons) {
-        //   for (final key in entry.keys) {
-        //     final dynamic value = entry[key];
-        //     print('$key: ${value.runtimeType}');
-        //   }
-        // }
       });
     } else {
       // TODO: Handle the error or show an error screen

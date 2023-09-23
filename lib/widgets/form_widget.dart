@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:galaxias_anmeldetool/widgets/personen_form.dart';
 import 'package:galaxias_anmeldetool/widgets/module_builder.dart';
 import 'package:provider/provider.dart';
-
-import '../models/anmelde_provider.dart';
+import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
+import 'package:galaxias_anmeldetool/screens/loading.dart';
 
 class FormWidget extends StatefulWidget {
   final dynamic modules;
@@ -60,6 +63,8 @@ class _FormWidgetState extends State<FormWidget> {
     setState(() => _currentPosition = _validPosition(position));
   }
 
+  bool isLoading = false;
+
   Widget _buildRow(
     List<Widget> widgets, {
     EdgeInsets padding = const EdgeInsets.only(bottom: 12.0),
@@ -79,7 +84,9 @@ class _FormWidgetState extends State<FormWidget> {
     final List<dynamic> moduleData = widget.modules;
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
     final registeredPersons = anmeldeProvider.registeredPersons;
-    return SingleChildScrollView(
+    final int personenIndex =
+        widget.modules.indexWhere((obj) => obj["title"] == "Personen");
+    return isLoading ? Center(child: SpinKitRing(color: Colors.black,),) : SingleChildScrollView(
       child: Column(
         children: [
           const SizedBox(
@@ -185,7 +192,6 @@ class _FormWidgetState extends State<FormWidget> {
                         pageData[_currentPosition] = formKeys[_currentPosition]
                             .currentState!
                             .instantValue;
-                        print(pageData);
                         _updatePosition(max(--_currentPosition, 0));
                       }
                     },
@@ -199,18 +205,23 @@ class _FormWidgetState extends State<FormWidget> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                    onPressed: () {
-                      if (registeredPersons.isEmpty && _currentPosition == widget.modules.indexWhere((obj) => obj["title"] == "Personen")) {
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      // Make sure to mark this callback as 'async'
+                      if (registeredPersons.isEmpty &&
+                          _currentPosition == personenIndex) {
                         // Show a warning, e.g., using a snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                                "Bitte melde mindestens eine Person an."),
+                            content:
+                                Text("Bitte melde mindestens eine Person an."),
                             duration: Duration(seconds: 2),
                           ),
                         );
                       } else {
-                        // Existing logic for moving forward or completing the process.
                         if (formKeys[_currentPosition].currentState != null &&
                             formKeys[_currentPosition]
                                 .currentState!
@@ -221,6 +232,52 @@ class _FormWidgetState extends State<FormWidget> {
                                   .instantValue;
                           _updatePosition(
                               min(++_currentPosition, _totalPages - 1));
+
+                          dynamic convertDateTime(dynamic item) {
+                            if (item is DateTime) {
+                              return item.toIso8601String();
+                            } else if (item is List) {
+                              return item.map((e) => convertDateTime(e)).toList();
+                            } else if (item is Map) {
+                              return item.map((key, value) => MapEntry(key, convertDateTime(value)));
+                            } else {
+                              return item;
+                            }
+                          }
+
+                          // adding persons into pageData
+                          final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
+                          pageData[personenIndex] = {"persons": anmeldeProvider.registeredPersons};
+
+                          final stringKeyedMap = pageData.map(
+                              (key, value) => MapEntry(key.toString(), value));
+
+                          final convertedData = convertDateTime({"pageData": stringKeyedMap});
+
+                          final response = await http.post(
+                            Uri.parse('https://api.larskra.eu/anmeldung-test'),
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: json.encode({"pageData": convertedData}),
+                          );
+
+                          setState(() {
+                            isLoading = false;
+                          });
+
+                          if (response.statusCode == 200 ||
+                              response.statusCode == 201) {
+                            Navigator.pop(context, true);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("Failed to send data. Try again."),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
                         }
                       }
                     },
@@ -234,17 +291,17 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      if (registeredPersons.isEmpty && _currentPosition == widget.modules.indexWhere((obj) => obj["title"] == "Personen")) {
+                      if (registeredPersons.isEmpty &&
+                          _currentPosition == personenIndex) {
                         // Show a warning, e.g., using a snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                                "Bitte melde mindestens eine Person an."),
+                            content:
+                                Text("Bitte melde mindestens eine Person an."),
                             duration: Duration(seconds: 2),
                           ),
                         );
                       } else {
-                        // Existing logic for moving forward or completing the process.
                         if (formKeys[_currentPosition].currentState != null &&
                             formKeys[_currentPosition]
                                 .currentState!

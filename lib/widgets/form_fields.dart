@@ -36,12 +36,10 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
           if ((value == null || value.isEmpty) && widget.required) {
             return 'Dieses Feld darf nicht leer sein.';
           }
-          // Add regex pattern for Nachname validation here
-          // print(!RegExp(widget.regex).hasMatch(value!));
           if (value != null && !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
-          return null; // Return null for no validation errors
+          return null;
         },
       ),
     );
@@ -77,7 +75,6 @@ class _InputSwitchState extends State<InputSwitch> {
         // TODO overwrites the saving of the state
         initialValue: widget.initialValue,
         validator: (value) {
-          // print(value);
           // TODO when dynamic initialValue is implemented this needs to be changed
           if(widget.required && (value == null || !value)) {
             return "Diese Option ist erforderlich um fortzufahren";
@@ -118,7 +115,6 @@ class _DateTimeInputState extends State<DateTimeInput> {
           labelText: widget.labelText + (widget.required ? "*" : "" ),
         ),
         validator: (value) {
-          // print(value);
           // TODO when dynamic initialValue is implemented this needs to be changed
           if(widget.required && value == null) {
             return "Dieses Feld darf nicht leer sein.";

@@ -270,12 +270,22 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             const SizedBox(width: 16),
             // TODO make ActionButton only visible when editing is possible
             FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.of(context).push(
+              onPressed: () async {
+                bool? result = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
                   ),
                 );
+
+                if (result != null && result) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Anmeldung verschickt!'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
               },
               label: const Text(
                 'Anmelden',

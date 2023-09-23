@@ -75,8 +75,6 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
   Widget build(BuildContext context) {
     Map<String, dynamic> module = widget.module;
     List<dynamic> inputFields = module['formFields'];
-    // print("pageData: " + widget.modules.toString());
-    // print(inputFields);
     return Column(
       children: [
         Padding(
