@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:galaxias_anmeldetool/widgets/form_fields.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
+import 'package:provider/provider.dart';
 
 class PersonenForm extends StatefulWidget {
   final List<dynamic> genders;
   final List<dynamic> eatingHabits;
   final List<Map<String, dynamic>> savedPersons;
   final List<dynamic> bookingOptions;
-  final ValueChanged<List<Map<String, dynamic>>> onPersonsRegistered;
+  // final ValueChanged<List<Map<String, dynamic>>> onPersonsRegistered;
 
   const PersonenForm(
-      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons, required this.bookingOptions, required this.onPersonsRegistered});
+      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons, required this.bookingOptions,});
 
 
   @override
@@ -19,16 +21,19 @@ class PersonenForm extends StatefulWidget {
 }
 
 class _PersonenFormState extends State<PersonenForm> {
-  List<Map<String, dynamic>> registeredPersons = [];
+  // List<Map<String, dynamic>> registeredPersons = [];
 
-  void _notifyPersonsChange() {
-    if (widget.onPersonsRegistered != null) {
-      widget.onPersonsRegistered(registeredPersons);
-    }
-  }
+  // void _notifyPersonsChange() {
+  //   if (widget.onPersonsRegistered != null) {
+  //     widget.onPersonsRegistered(registeredPersons);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
+    final registeredPersons = anmeldeProvider.registeredPersons;
+    final savedPersons = anmeldeProvider.savedPersons;
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -133,7 +138,7 @@ class _PersonenFormState extends State<PersonenForm> {
                                     'bookingOption': person['bookingOption'],
                                 };
                               });
-                              _notifyPersonsChange();
+                              // _notifyPersonsChange();
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[400]),
@@ -142,10 +147,10 @@ class _PersonenFormState extends State<PersonenForm> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              widget.savedPersons.add(person);
+                              savedPersons.add(person);
                               registeredPersons.remove(person);
                             });
-                            _notifyPersonsChange();
+                            // _notifyPersonsChange();
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.red[300]),
                           child: Text('Entfernen', style: TextStyle(color: Colors.grey[100])),
@@ -184,7 +189,7 @@ class _PersonenFormState extends State<PersonenForm> {
           ),
 
           Visibility(
-            visible: widget.savedPersons.isEmpty,
+            visible: savedPersons.isEmpty,
             child: const Padding(
               padding: EdgeInsets.all(12.0),
               child: Column(
@@ -221,7 +226,7 @@ class _PersonenFormState extends State<PersonenForm> {
               );
               if (result is Map<String, dynamic>) {
                 setState(() {
-                  widget.savedPersons.add(result);
+                  savedPersons.add(result);
                 });
               }
             },
@@ -233,7 +238,7 @@ class _PersonenFormState extends State<PersonenForm> {
           ),
 
           // Gespeicherte Personen
-          ...widget.savedPersons.map((person) {
+          ...savedPersons.map((person) {
             return Card(
               color: Colors.deepOrange[200],
               margin: const EdgeInsets.symmetric(vertical: 10),
@@ -261,7 +266,7 @@ class _PersonenFormState extends State<PersonenForm> {
                             );
                             if (result is Map<String, dynamic>) {
                               setState(() {
-                                widget.savedPersons[widget.savedPersons.indexOf(person)] =
+                                savedPersons[savedPersons.indexOf(person)] =
                                     result;
                               });
                             }
@@ -281,9 +286,9 @@ class _PersonenFormState extends State<PersonenForm> {
                               setState(() {
                                 final combinedPerson = {...person, ...result};
                                 registeredPersons.add(combinedPerson);
-                                widget.savedPersons.remove(person);
+                                savedPersons.remove(person);
                               });
-                              _notifyPersonsChange();
+                              // _notifyPersonsChange();
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),

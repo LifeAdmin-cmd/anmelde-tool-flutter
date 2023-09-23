@@ -4,6 +4,9 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:galaxias_anmeldetool/widgets/personen_form.dart';
 import 'package:galaxias_anmeldetool/widgets/module_builder.dart';
+import 'package:provider/provider.dart';
+
+import '../models/anmelde_provider.dart';
 
 class FormWidget extends StatefulWidget {
   final dynamic modules;
@@ -74,6 +77,8 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   Widget build(BuildContext context) {
     final List<dynamic> moduleData = widget.modules;
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
+    final registeredPersons = anmeldeProvider.registeredPersons;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -146,11 +151,6 @@ class _FormWidgetState extends State<FormWidget> {
                       eatingHabits: widget.eatingHabits,
                       savedPersons: widget.fetchedPersons,
                       bookingOptions: widget.bookingOptions,
-                      onPersonsRegistered: (persons) {
-                        setState(() {
-                          registeredPersons = persons;
-                        });
-                      },
                     )),
           // const Padding(
           //   padding: EdgeInsets.all(12.0),

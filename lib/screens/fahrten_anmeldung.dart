@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:galaxias_anmeldetool/screens/loading.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:galaxias_anmeldetool/widgets/form_widget.dart';
+import 'package:provider/provider.dart';
 
 class FahrtenAnmeldung extends StatefulWidget {
   final List<dynamic> bookingOptions;
@@ -43,6 +45,9 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         fetchedPersons = (json.decode(utf8.decode(responses[3].bodyBytes)) as List).cast<Map<String, dynamic>>();
         isLoading = false;
 
+        final personsProvider = Provider.of<AnmeldeProvider>(context, listen: false);
+        personsProvider.clearPersons();
+
         for (var person in fetchedPersons) {
           if (person['birthday'] != null) {
             person['birthday'] = DateTime.parse(person['birthday'] as String);
@@ -51,6 +56,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
             List<String> personEatingHabits = (person['eatingHabits'] as List).map((item) => item.toString()).toList();
             person['eatingHabits'] = personEatingHabits;
           }
+          personsProvider.addSavedPerson(person);
         }
 
         // print(widget.fahrtenId.runtimeType);
