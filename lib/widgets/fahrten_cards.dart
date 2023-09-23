@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:galaxias_anmeldetool/screens/loading.dart';
+import 'package:galaxias_anmeldetool/screens/fahrten_ansicht.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 
 
 class FahrtenCards extends StatefulWidget {
   final String category;
+  final List<dynamic> data;
+  final String nullText;
 
-  const FahrtenCards({Key? key, required this.category}) : super(key: key);
+  const FahrtenCards({Key? key, required this.category, required this.data, required this.nullText}) : super(key: key);
 
   @override
   _FahrtenCardsState createState() => _FahrtenCardsState();
@@ -16,47 +16,33 @@ class FahrtenCards extends StatefulWidget {
 
 class _FahrtenCardsState extends State<FahrtenCards> {
 
-  List<dynamic> jsonData = []; // To store the JSON data
-
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData(); // Call the API when the widget is first created
-  }
-
-  Future<void> fetchData() async {
-    isLoading = true;
-    // Make the API call and parse the JSON response
-    // TODO update to production URL
-    final response = await http.get(Uri.parse('http://185.223.29.19:8080/fahrten'));
-
-    if (response.statusCode == 200) {
-      isLoading = false;
-      setState(() {
-        final List<dynamic> allData = json.decode(response.body);
-        final List<dynamic> categoryData = allData.where((item) => item['status'] == widget.category).toList();
-        jsonData = categoryData;
-      });
-    } else {
-      isLoading = false;
-      throw Exception('Failed to load data from the API');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return isLoading ? const Loading() : Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // const SizedBox(height: 8.0),
-          Expanded(
-            child: jsonData.isEmpty ? const Center(child: Text("Aktuell gibt es hier nichts zu sehen!")) : ListView.builder(
-              itemCount: jsonData.length,
+          widget.data.isEmpty ? Column(
+            children: [
+              const Icon(Icons.warning_amber_rounded, size: 85,),
+              const SizedBox(height: 8.0,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  // show dynamic error text
+                  widget.nullText,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ) : Expanded(
+            child: ListView.builder(
+              itemCount: widget.data.length,
               itemBuilder: (BuildContext context, int index) {
-                final item = jsonData[index];
+                final item = widget.data[index];
                 // Create a tile for each object in the JSON data
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -65,7 +51,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                     child: Column(
                       children: [
                         ListTile(
-                          // trailing: const Icon(Icons.edit),
                           title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,9 +63,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                   Text("Von ${DateFormat('d.M.y').format(DateTime.parse(item['startDate'] ))} bis ${DateFormat('d.M.y').format(DateTime.parse(item['endDate']))}"),
                                 ],
                               ),
-                              // const Divider(
-                              //   height: 15.0,
-                              // ),
                               const SizedBox(height: 15.0,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -88,7 +70,12 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                   Expanded( // Wrap the button in an Expanded widget
                                     child: OutlinedButton(
                                       onPressed: () {
-                                        print(item['id']);
+                                        // TODO add info page template for Fahrten
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => FahrtenAnsicht(fahrtenData: item),
+                                          ),
+                                        );
                                       },
                                       style: OutlinedButton.styleFrom(
                                         backgroundColor: Colors.green[700],
@@ -128,5 +115,6 @@ class _FahrtenCardsState extends State<FahrtenCards> {
   }
 }
 
-// TODO handle asynchronous suspension error -> after clicking through pages quickly
-// TODO infinite loadingScreen on Android
+// TODO handle asynchronous suspension error -> after clicking through pages quickly // probably fixed
+// TODO infinite loadingScreen on Android // might be fixed
+// TODO change "Edit" button according to category -> category "expired" should just have an "information" button
