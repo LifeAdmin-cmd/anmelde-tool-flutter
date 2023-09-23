@@ -16,6 +16,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
   List<dynamic> modules = [];
   List<dynamic> genders = [];
   List<dynamic> eatingHabits = [];
+  List<Map<String, dynamic>> fetchedPersons = [];
   late bool isLoading;
 
   Future<void> fetchData() async {
@@ -25,6 +26,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
       http.get(Uri.parse('https://api.larskra.eu/modules')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
+      http.get(Uri.parse('https://api.larskra.eu/persons')),
     ]);
 
     // Check if all responses have status code 200
@@ -36,7 +38,25 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         modules = json.decode(utf8.decode(responses[0].bodyBytes));
         genders = json.decode(utf8.decode(responses[1].bodyBytes));
         eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
+        fetchedPersons = (json.decode(utf8.decode(responses[3].bodyBytes)) as List).cast<Map<String, dynamic>>();
         isLoading = false;
+
+        for (var person in fetchedPersons) {
+          if (person['birthday'] != null) {
+            person['birthday'] = DateTime.parse(person['birthday'] as String);
+          }
+          if (person['eatingHabits'] != null) {
+            List<String> personEatingHabits = (person['eatingHabits'] as List).map((item) => item.toString()).toList();
+            person['eatingHabits'] = personEatingHabits;
+          }
+        }
+
+        for (final entry in fetchedPersons) {
+          for (final key in entry.keys) {
+            final dynamic value = entry[key];
+            print('$key: ${value.runtimeType}');
+          }
+        }
       });
     } else {
       // TODO: Handle the error or show an error screen
@@ -59,7 +79,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits,),
+          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits, fetchedPersons: fetchedPersons),
         ),
       ),
     );
