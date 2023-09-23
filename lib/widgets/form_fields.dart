@@ -93,14 +93,12 @@ class DateTimeInput extends StatefulWidget {
   final String labelText;
   final String idName;
   final bool required;
-  // final bool initialValue;
 
   const DateTimeInput({
     super.key,
     required this.labelText,
     required this.idName,
     this.required = true,
-    // this.initialValue = false,
   });
 
   @override
@@ -119,9 +117,6 @@ class _DateTimeInputState extends State<DateTimeInput> {
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : "" ),
         ),
-        // name: widget.labelText,
-        // TODO overwrites the saving of the state
-        // initialValue: widget.initialValue,
         validator: (value) {
           // print(value);
           // TODO when dynamic initialValue is implemented this needs to be changed
