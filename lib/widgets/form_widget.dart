@@ -9,7 +9,11 @@ class FormWidget extends StatefulWidget {
   final dynamic modules;
   final dynamic genders;
   final dynamic eatingHabits;
-  const FormWidget({super.key, required this.modules, required this.genders, required this.eatingHabits});
+  const FormWidget(
+      {super.key,
+      required this.modules,
+      required this.genders,
+      required this.eatingHabits});
 
   @override
   State<FormWidget> createState() => _FormWidgetState();
@@ -122,10 +126,13 @@ class _FormWidgetState extends State<FormWidget> {
             initialValue: pageData[_currentPosition] ?? {},
             child: moduleData[_currentPosition]['title'] != "Personen"
                 ? ModuleBuilder(
-                    // title: pageData,
                     module: moduleData[_currentPosition],
+                    currentPageData:
+                        pageData[_currentPosition] ?? {}, // <-- Add this line
                   )
-                : PersonenForm(genders: widget.genders, eatingHabits: widget.eatingHabits)),
+                : PersonenForm(
+                    genders: widget.genders,
+                    eatingHabits: widget.eatingHabits)),
         // const Padding(
         //   padding: EdgeInsets.all(12.0),
         //   child: Divider(),
@@ -137,34 +144,36 @@ class _FormWidgetState extends State<FormWidget> {
         ),
         _buildRow([
           _currentPosition == 0
-          ? ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              'Abbrechen',
-              style: TextStyle(color: Colors.white),
-            ),
-          )
-          : ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _currentPosition == 0 ? Colors.grey : Colors.red,
-            ),
-            onPressed: () {
-              if (formKeys[_currentPosition].currentState != null) {
-                pageData[_currentPosition] =
-                    formKeys[_currentPosition].currentState!.instantValue;
-                _updatePosition(max(--_currentPosition, 0));
-              }
-            },
-            child: const Text(
-              'Zurück',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+              ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Abbrechen',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        _currentPosition == 0 ? Colors.grey : Colors.red,
+                  ),
+                  onPressed: () {
+                    if (formKeys[_currentPosition].currentState != null) {
+                      pageData[_currentPosition] =
+                          formKeys[_currentPosition].currentState!.instantValue;
+                      print(pageData);
+                      _updatePosition(max(--_currentPosition, 0));
+                    }
+                  },
+                  child: const Text(
+                    'Zurück',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
           _currentPosition == (_totalPages - 1)
               ? ElevatedButton(
                   style: ElevatedButton.styleFrom(

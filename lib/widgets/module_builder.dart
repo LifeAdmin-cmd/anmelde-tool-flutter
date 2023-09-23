@@ -3,8 +3,13 @@ import 'package:galaxias_anmeldetool/widgets/form_fields.dart';
 
 class ModuleBuilder extends StatefulWidget {
   final Map<String, dynamic> module;
+  final Map<String, dynamic> currentPageData; // <-- Add this
 
-  const ModuleBuilder({super.key, required this.module});
+  const ModuleBuilder({
+    super.key,
+    required this.module,
+    required this.currentPageData, // <-- And this
+  });
 
   @override
   State<ModuleBuilder> createState() => _ModuleBuilderState();
@@ -31,8 +36,24 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
       }
       case "booleanAttribute": {
-        return InputSwitch(labelText: formField['label'], idName: formField['id'], required: formField['required'],);
+        bool currentValue;
+
+        // Check if a value is provided in pageData
+        if (widget.currentPageData.containsKey(formField['id'])) {
+          currentValue = widget.currentPageData[formField['id']];
+        } else {
+          // Only if no value exists in pageData, use the initialValue from the formField (or default to false)
+          currentValue = formField['initialValue'] ?? false;
+        }
+
+        return InputSwitch(
+          labelText: formField['label'],
+          idName: formField['id'],
+          required: formField['required'],
+          initialValue: currentValue,
+        );
       }
+
       case "integerAttribute": {
         return Text("Placeholder");
       }

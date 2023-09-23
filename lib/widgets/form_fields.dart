@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
@@ -54,14 +52,14 @@ class InputSwitch extends StatefulWidget {
   final String labelText;
   final String idName;
   final bool required;
-  // final bool initialValue;
+  final bool initialValue;
 
   const InputSwitch({
     super.key,
     required this.labelText,
     required this.idName,
     this.required = true,
-    // this.initialValue = false,
+    this.initialValue = false,
   });
 
   @override
@@ -77,7 +75,7 @@ class _InputSwitchState extends State<InputSwitch> {
         name: widget.idName,
         title: Text(widget.labelText + (widget.required ? "*" : "" )),
         // TODO overwrites the saving of the state
-        // initialValue: widget.initialValue,
+        initialValue: widget.initialValue,
         validator: (value) {
           // print(value);
           // TODO when dynamic initialValue is implemented this needs to be changed
@@ -166,7 +164,7 @@ class _DropdownInputState extends State<DropdownInput> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.labelText, // Display labelText as a label above the dropdown
+            widget.labelText + (widget.required ? "*" : "" ),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -211,7 +209,7 @@ class ChoiceInput extends StatefulWidget {
     required this.idName,
     required this.data,
     this.required = true,
-    this.placeholder = "Bitte wählen ...", // Include the placeholder in the constructor
+    this.placeholder = "Bitte wählen ...",
   }) : super(key: key);
 
   @override
@@ -227,13 +225,15 @@ class _ChoiceInputState extends State<ChoiceInput> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.labelText, // Display labelText as a label above the dropdown
+            widget.labelText + (widget.required ? "*" : "" ),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
           FormBuilderFilterChip(
             name: widget.idName,
+            // checkmarkColor: Colors.green,
+            selectedColor: Colors.green[400],
             options: widget.data
                 .map<FormBuilderChipOption<String>>((dynamic value) {
               final Map<String, dynamic> item = value as Map<String, dynamic>;
