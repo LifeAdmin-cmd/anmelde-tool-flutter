@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
+import 'package:galaxias_anmeldetool/screens/fahrten_anmeldung.dart';
 
 class FahrtenAnsicht extends StatefulWidget {
   final Map<String, dynamic> fahrtenData;
@@ -58,6 +59,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                   fontSize: 17.0,
                                 ),
                               ),
+                              // TODO handle wrap long text error
                               Text(
                                 "${fahrtenData['shortDescription']}",
                                 style: const TextStyle(
@@ -144,7 +146,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                     Text("Name:", style: TextStyle(fontWeight: FontWeight.bold),),
                                     Text("Beschr.:", style: TextStyle(fontWeight: FontWeight.bold),),
                                     Text("Straße:", style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Text("PLZ:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text("Ort:", style: TextStyle(fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               ),
@@ -204,52 +206,50 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               fontSize: 17.0,
                             ),
                           ),
-                          SingleChildScrollView(
-                            child: Column( // Wrap with Column
-                              children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: fahrtenData['bookingOptions'].length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final item = fahrtenData['bookingOptions'][index];
-                                    // build Price cards
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 2.0),
-                                      child: Card(
-                                        color: Colors.grey[300],
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              const Column(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 6.0),
-                                                    child: Icon(Icons.person, size: 18,),
-                                                  )
-                                                ],
-                                              ),
-                                              Column(
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
-                                                      const Text(" - "),
-                                                      Text(item['price'] + "€"),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                          Column(
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: fahrtenData['bookingOptions'].length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final item = fahrtenData['bookingOptions'][index];
+                                  // build Price cards
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 2.0),
+                                    child: Card(
+                                      color: Colors.grey[300],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            const Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                                  child: Icon(Icons.person, size: 18,),
+                                                )
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
+                                                    const Text(" - "),
+                                                    Text(item['price'] + "€"),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -270,8 +270,22 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             const SizedBox(width: 16),
             // TODO make ActionButton only visible when editing is possible
             FloatingActionButton.extended(
-              onPressed: () {
-                // TODO Anmelde-Prozess starten
+              onPressed: () async {
+                bool? result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
+                  ),
+                );
+
+                if (result != null && result) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Anmeldung verschickt!'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
               },
               label: const Text(
                 'Anmelden',
@@ -326,7 +340,6 @@ class PhaseInfoWidget extends StatelessWidget {
           backgroundColor: Colors.green,
         );
       }
-
       return RoundIcon(
         iconData: Icons.error_outline,
         backgroundColor: Colors.orange.shade700,
@@ -356,7 +369,7 @@ class PhaseInfoWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                        // TODO Times all at 16:00, look if it's wrong in the response data or the formatting
+                        // TODO Times all at 16:00, look if it's wrong in the response data or the formatting => fixed itself?
                         "$startOrEnde: ${DateFormat("d. MMM -").add_Hm().format(date)} Uhr "
                         "(${date.isBefore(DateTime.now()) ? "Vor" : "In"} ${date.difference(DateTime.now()).inDays.abs()} Tagen)"),
                   ],

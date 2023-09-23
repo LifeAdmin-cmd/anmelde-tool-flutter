@@ -32,7 +32,7 @@ class _FahrtenListState extends State<FahrtenList> {
         nullText = "Es sind noch keine Fahrten für die Zukunft geplant";
       case ('expired'):
         nullText = "Es liegen noch keine Fahrten in der Vergangenheit";
-      case ('active'):
+      case ('pending'):
         nullText = "Du bist aktuell zu keiner Veranstaltung eingeladen";
     }
   }
@@ -47,7 +47,7 @@ class _FahrtenListState extends State<FahrtenList> {
   // function to fetch data
   Future<void> fetchData() async {
     // TODO update to production URL
-    final response = await http.get(Uri.parse('http://185.223.29.19:8080/fahrten'));
+    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
 
     if (response.statusCode == 200) {
       setState(() {
