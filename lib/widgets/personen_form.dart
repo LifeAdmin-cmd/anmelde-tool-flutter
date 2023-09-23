@@ -8,9 +8,11 @@ class PersonenForm extends StatefulWidget {
   final List<dynamic> eatingHabits;
   final List<Map<String, dynamic>> savedPersons;
   final List<dynamic> bookingOptions;
+  final ValueChanged<List<Map<String, dynamic>>> onPersonsRegistered;
 
   const PersonenForm(
-      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons, required this.bookingOptions});
+      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons, required this.bookingOptions, required this.onPersonsRegistered});
+
 
   @override
   State<PersonenForm> createState() => _PersonenFormState();
@@ -18,6 +20,12 @@ class PersonenForm extends StatefulWidget {
 
 class _PersonenFormState extends State<PersonenForm> {
   List<Map<String, dynamic>> registeredPersons = [];
+
+  void _notifyPersonsChange() {
+    if (widget.onPersonsRegistered != null) {
+      widget.onPersonsRegistered(registeredPersons);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +133,7 @@ class _PersonenFormState extends State<PersonenForm> {
                                     'bookingOption': person['bookingOption'],
                                 };
                               });
+                              _notifyPersonsChange();
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[400]),
@@ -136,6 +145,7 @@ class _PersonenFormState extends State<PersonenForm> {
                               widget.savedPersons.add(person);
                               registeredPersons.remove(person);
                             });
+                            _notifyPersonsChange();
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.red[300]),
                           child: Text('Entfernen', style: TextStyle(color: Colors.grey[100])),
@@ -273,6 +283,7 @@ class _PersonenFormState extends State<PersonenForm> {
                                 registeredPersons.add(combinedPerson);
                                 widget.savedPersons.remove(person);
                               });
+                              _notifyPersonsChange();
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),

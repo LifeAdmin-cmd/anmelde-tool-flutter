@@ -13,16 +13,15 @@ class FormWidget extends StatefulWidget {
   final String fahrtenId;
   final List<Map<String, dynamic>> fetchedPersons;
 
-  const FormWidget(
-    {super.key,
+  const FormWidget({
+    super.key,
     required this.modules,
     required this.genders,
     required this.eatingHabits,
     required this.fetchedPersons,
     required this.bookingOptions,
     required this.fahrtenId,
-    }
-  );
+  });
 
   @override
   State<FormWidget> createState() => _FormWidgetState();
@@ -32,6 +31,8 @@ class _FormWidgetState extends State<FormWidget> {
   int _currentPosition = 0;
 
   Map<int, Map<String, dynamic>> pageData = {};
+
+  List<Map<String, dynamic>> registeredPersons = [];
 
   late final int _totalPages;
   late final List<GlobalKey<FormBuilderState>> formKeys;
@@ -92,8 +93,8 @@ class _FormWidgetState extends State<FormWidget> {
                       activeSize: const Size(20.0, 20.0),
                       color: Colors.blue
                           .shade200, // Set the default color for previous dots
-                      activeColor: Colors
-                          .blue.shade200, // Set the same color for previous dots
+                      activeColor: Colors.blue
+                          .shade200, // Set the same color for previous dots
                       activeShape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                             10.0), // Adjust the border radius as needed
@@ -145,7 +146,12 @@ class _FormWidgetState extends State<FormWidget> {
                       eatingHabits: widget.eatingHabits,
                       savedPersons: widget.fetchedPersons,
                       bookingOptions: widget.bookingOptions,
-                      )),
+                      onPersonsRegistered: (persons) {
+                        setState(() {
+                          registeredPersons = persons;
+                        });
+                      },
+                    )),
           // const Padding(
           //   padding: EdgeInsets.all(12.0),
           //   child: Divider(),
@@ -176,8 +182,9 @@ class _FormWidgetState extends State<FormWidget> {
                     ),
                     onPressed: () {
                       if (formKeys[_currentPosition].currentState != null) {
-                        pageData[_currentPosition] =
-                            formKeys[_currentPosition].currentState!.instantValue;
+                        pageData[_currentPosition] = formKeys[_currentPosition]
+                            .currentState!
+                            .instantValue;
                         print(pageData);
                         _updatePosition(max(--_currentPosition, 0));
                       }
@@ -193,12 +200,28 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      if (formKeys[_currentPosition].currentState != null &&
-                          formKeys[_currentPosition].currentState!.validate()) {
-                        pageData[_currentPosition] =
-                            formKeys[_currentPosition].currentState!.instantValue;
-                        print(pageData);
-                        Navigator.of(context).pop();
+                      if (registeredPersons.isEmpty && _currentPosition == widget.modules.indexWhere((obj) => obj["title"] == "Personen")) {
+                        // Show a warning, e.g., using a snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                "Bitte melde mindestens eine Person an."),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      } else {
+                        // Existing logic for moving forward or completing the process.
+                        if (formKeys[_currentPosition].currentState != null &&
+                            formKeys[_currentPosition]
+                                .currentState!
+                                .validate()) {
+                          pageData[_currentPosition] =
+                              formKeys[_currentPosition]
+                                  .currentState!
+                                  .instantValue;
+                          _updatePosition(
+                              min(++_currentPosition, _totalPages - 1));
+                        }
                       }
                     },
                     child: const Text(
@@ -211,12 +234,28 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      if (formKeys[_currentPosition].currentState != null &&
-                          formKeys[_currentPosition].currentState!.validate()) {
-                        pageData[_currentPosition] = formKeys[_currentPosition]
-                            .currentState!
-                            .instantValue; // _formKey.currentState?.instantValue.toString()
-                        _updatePosition(min(++_currentPosition, _totalPages - 1));
+                      if (registeredPersons.isEmpty && _currentPosition == widget.modules.indexWhere((obj) => obj["title"] == "Personen")) {
+                        // Show a warning, e.g., using a snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                "Bitte melde mindestens eine Person an."),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      } else {
+                        // Existing logic for moving forward or completing the process.
+                        if (formKeys[_currentPosition].currentState != null &&
+                            formKeys[_currentPosition]
+                                .currentState!
+                                .validate()) {
+                          pageData[_currentPosition] =
+                              formKeys[_currentPosition]
+                                  .currentState!
+                                  .instantValue;
+                          _updatePosition(
+                              min(++_currentPosition, _totalPages - 1));
+                        }
                       }
                     },
                     child: const Text(
