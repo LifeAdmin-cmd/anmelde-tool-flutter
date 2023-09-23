@@ -6,7 +6,9 @@ import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:galaxias_anmeldetool/widgets/form_widget.dart';
 
 class FahrtenAnmeldung extends StatefulWidget {
-  const FahrtenAnmeldung({super.key});
+  final List<dynamic> bookingOptions;
+  final String fahrtenId;
+  const FahrtenAnmeldung({super.key, required this.bookingOptions, required this.fahrtenId});
 
   @override
   State<FahrtenAnmeldung> createState() => _FahrtenAnmeldungState();
@@ -51,12 +53,14 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
           }
         }
 
-        for (final entry in fetchedPersons) {
-          for (final key in entry.keys) {
-            final dynamic value = entry[key];
-            print('$key: ${value.runtimeType}');
-          }
-        }
+        // print(widget.fahrtenId.runtimeType);
+        // print(widget.bookingOptions);
+        // for (final entry in fetchedPersons) {
+        //   for (final key in entry.keys) {
+        //     final dynamic value = entry[key];
+        //     print('$key: ${value.runtimeType}');
+        //   }
+        // }
       });
     } else {
       // TODO: Handle the error or show an error screen
@@ -79,7 +83,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits, fetchedPersons: fetchedPersons),
+          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits, fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
         ),
       ),
     );

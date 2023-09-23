@@ -9,6 +9,8 @@ class FormWidget extends StatefulWidget {
   final dynamic modules;
   final dynamic genders;
   final dynamic eatingHabits;
+  final List<dynamic> bookingOptions;
+  final String fahrtenId;
   final List<Map<String, dynamic>> fetchedPersons;
 
   const FormWidget(
@@ -16,7 +18,9 @@ class FormWidget extends StatefulWidget {
     required this.modules,
     required this.genders,
     required this.eatingHabits,
-    required this.fetchedPersons
+    required this.fetchedPersons,
+    required this.bookingOptions,
+    required this.fahrtenId,
     }
   );
 
@@ -140,6 +144,7 @@ class _FormWidgetState extends State<FormWidget> {
                       genders: widget.genders,
                       eatingHabits: widget.eatingHabits,
                       savedPersons: widget.fetchedPersons,
+                      bookingOptions: widget.bookingOptions,
                       )),
           // const Padding(
           //   padding: EdgeInsets.all(12.0),

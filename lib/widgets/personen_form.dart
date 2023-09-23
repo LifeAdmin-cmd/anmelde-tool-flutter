@@ -7,8 +7,10 @@ class PersonenForm extends StatefulWidget {
   final List<dynamic> genders;
   final List<dynamic> eatingHabits;
   final List<Map<String, dynamic>> savedPersons;
+  final List<dynamic> bookingOptions;
+
   const PersonenForm(
-      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons});
+      {super.key, required this.genders, required this.eatingHabits, required this.savedPersons, required this.bookingOptions});
 
   @override
   State<PersonenForm> createState() => _PersonenFormState();
@@ -85,8 +87,11 @@ class _PersonenFormState extends State<PersonenForm> {
             ),
           ),
 
-
           ...registeredPersons.map((person) {
+            final bookingOption = widget.bookingOptions.firstWhere(
+                  (option) => option['id'].toString() == person['bookingOption'],
+              orElse: () => null,
+            );
             return Card(
               color: Colors.green[100],
               margin: const EdgeInsets.symmetric(vertical: 10),
@@ -95,7 +100,7 @@ class _PersonenFormState extends State<PersonenForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('${person['firstName']} ${person['lastName']}'),
+                    Text('${person['firstName']} ${person['lastName']} ${bookingOption != null ? '(${bookingOption['name']} - ${bookingOption['price']} €)' : ''}'),
                     const SizedBox(height: 12.0,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -106,7 +111,7 @@ class _PersonenFormState extends State<PersonenForm> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => NewPersonForm(
-                                  initialValues: person,
+                                  initialValues: person,  // ensure you're passing the entire person
                                   genders: widget.genders,
                                   eatingHabits: widget.eatingHabits,
                                 ),
@@ -114,8 +119,11 @@ class _PersonenFormState extends State<PersonenForm> {
                             );
                             if (result is Map<String, dynamic>) {
                               setState(() {
-                                registeredPersons[registeredPersons.indexOf(person)] =
-                                    result;
+                                registeredPersons[registeredPersons.indexOf(person)] = {
+                                  ...result,
+                                  if (person.containsKey('bookingOption'))
+                                    'bookingOption': person['bookingOption'],
+                                };
                               });
                             }
                           },
@@ -251,14 +259,21 @@ class _PersonenFormState extends State<PersonenForm> {
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[400]),
                           child: Text('Bearbeiten', style: TextStyle(color: Colors.grey[100])),
                         ),
-                        // TODO bookingOptions prompt
                         ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              registeredPersons.add(person);
-                              print(registeredPersons);
-                              widget.savedPersons.remove(person);
-                            });
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SelectBookingOption(bookingOptions: widget.bookingOptions),
+                              ),
+                            );
+                            if (result is Map<String, dynamic>) {
+                              setState(() {
+                                final combinedPerson = {...person, ...result};
+                                registeredPersons.add(combinedPerson);
+                                widget.savedPersons.remove(person);
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),
                           child: Text('Hinzufügen', style: TextStyle(color: Colors.grey[100]),),
@@ -348,10 +363,6 @@ class _NewPersonFormState extends State<NewPersonForm> {
                     backgroundColor: Colors.green,
                   ),
                   onPressed: () {
-                    final Map<String, dynamic> formData = formKey.currentState!.instantValue;
-                    for (final dynamic value in formData.values) {
-                      print(value.runtimeType);
-                    }
                     if (formKey.currentState != null &&
                         formKey.currentState!.validate()) {
                       var result = formKey.currentState!.instantValue;
@@ -371,3 +382,59 @@ class _NewPersonFormState extends State<NewPersonForm> {
     );
   }
 }
+
+class SelectBookingOption extends StatefulWidget {
+  final List<dynamic> bookingOptions;
+  const SelectBookingOption({super.key, required this.bookingOptions});
+
+  @override
+  State<SelectBookingOption> createState() => _SelectBookingOptionState();
+}
+
+class _SelectBookingOptionState extends State<SelectBookingOption> {
+  @override
+  Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormBuilderState>();
+
+    return Scaffold(
+      appBar: const DPVAppBar(title: "Buchungsoption"),
+      body: FormBuilder(
+        key: formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DropdownInput(
+              labelText: "Buchungsoption auswählen",
+              idName: "bookingOption",
+              data: widget.bookingOptions.map<Map<String, dynamic>>((item) {
+                final Map<String, dynamic> castedItem = item as Map<String, dynamic>;
+                return {
+                  ...castedItem,
+                  'name': castedItem['name'] + " - " + castedItem['price'] + " €"
+                };
+              }).toList(),
+            ),
+            const SizedBox(height: 8.0,),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              onPressed: () {
+                if (formKey.currentState != null &&
+                    formKey.currentState!.validate()) {
+                  var result = formKey.currentState!.instantValue;
+                  Navigator.pop(context, result);
+                }
+              },
+              child: const Text(
+                'Bestätigen',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
