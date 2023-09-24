@@ -53,18 +53,20 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
           initialValue: currentValue,
         );
       }
-
       case "integerAttribute": {
-        return Text("Placeholder");
+        return IntegerInput(labelText: formField['label'], idName: formField['id']);
       }
       case "floatAttribute": {
-        return Text("Placeholder");
+        return FloatInput(labelText: formField['label'], idName: formField['id']);
       }
       case "dateTimeAttribute": {
         return DateTimeInput(labelText: formField['label'], idName: formField['id']);
       }
       case "travelAttribute": {
         return Text("Placeholder");
+      }
+      case "textAttribute": {
+        return TextFieldInput(labelText: formField['label'], idName: formField['id']);
       }
     }
 

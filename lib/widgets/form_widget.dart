@@ -9,7 +9,6 @@ import 'package:galaxias_anmeldetool/widgets/personen_form.dart';
 import 'package:galaxias_anmeldetool/widgets/module_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
-import 'package:galaxias_anmeldetool/screens/loading.dart';
 
 class FormWidget extends StatefulWidget {
   final dynamic modules;
@@ -206,14 +205,8 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-
-                      // Make sure to mark this callback as 'async'
                       if (registeredPersons.isEmpty &&
                           _currentPosition == personenIndex) {
-                        // Show a warning, e.g., using a snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content:
@@ -226,12 +219,9 @@ class _FormWidgetState extends State<FormWidget> {
                             formKeys[_currentPosition]
                                 .currentState!
                                 .validate()) {
-                          pageData[_currentPosition] =
-                              formKeys[_currentPosition]
-                                  .currentState!
-                                  .instantValue;
-                          _updatePosition(
-                              min(++_currentPosition, _totalPages - 1));
+                          setState(() {
+                            isLoading = true;
+                          });
 
                           dynamic convertDateTime(dynamic item) {
                             if (item is DateTime) {
@@ -248,6 +238,8 @@ class _FormWidgetState extends State<FormWidget> {
                           // adding persons into pageData
                           final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
                           pageData[personenIndex] = {"persons": anmeldeProvider.registeredPersons};
+
+                          print(pageData);
 
                           final stringKeyedMap = pageData.map(
                               (key, value) => MapEntry(key.toString(), value));

@@ -249,3 +249,132 @@ class _ChoiceInputState extends State<ChoiceInput> {
     );
   }
 }
+
+class IntegerInput extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+  final String regexError;
+
+  const IntegerInput({
+    Key? key,
+    required this.labelText,
+    required this.idName,
+    this.required = true,
+    this.regexError = "Ungültige Eingabe. Nur Ganzzahlen erlaubt.",
+  }) : super(key: key);
+
+  @override
+  State<IntegerInput> createState() => _IntegerInputState();
+}
+
+class _IntegerInputState extends State<IntegerInput> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: FormBuilderTextField(
+        name: widget.idName,
+        keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+        decoration: InputDecoration(
+          labelText: widget.labelText + (widget.required ? "*" : ""),
+        ),
+        validator: (value) {
+          if ((value == null || value.isEmpty) && widget.required) {
+            return 'Dieses Feld darf nicht leer sein.';
+          }
+          if (value != null && !RegExp(r'^-?[0-9]+$').hasMatch(value)) {
+            return widget.regexError;
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
+class FloatInput extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+  final String regexError;
+
+  const FloatInput({
+    Key? key,
+    required this.labelText,
+    required this.idName,
+    this.required = true,
+    this.regexError = "Ungültige Eingabe. Nur Fließkommazahlen erlaubt.",
+  }) : super(key: key);
+
+  @override
+  State<FloatInput> createState() => _FloatInputState();
+}
+
+class _FloatInputState extends State<FloatInput> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: FormBuilderTextField(
+        name: widget.idName,
+        keyboardType: const TextInputType.numberWithOptions(
+            decimal: true, signed: true),
+        decoration: InputDecoration(
+          labelText: widget.labelText + (widget.required ? "*" : ""),
+        ),
+        validator: (value) {
+          if ((value == null || value.isEmpty) && widget.required) {
+            return 'Dieses Feld darf nicht leer sein.';
+          }
+          if (value != null &&
+              !RegExp(r'^-?[0-9]*\.?[0-9]+$').hasMatch(value)) {
+            return widget.regexError;
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
+class TextFieldInput extends StatefulWidget {
+  final String labelText;
+  final String idName;
+  final bool required;
+
+  const TextFieldInput({
+    Key? key,
+    required this.labelText,
+    required this.idName,
+    this.required = true,
+  }) : super(key: key);
+
+  @override
+  State<TextFieldInput> createState() => _TextFieldInputState();
+}
+
+class _TextFieldInputState extends State<TextFieldInput> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: FormBuilderTextField(
+        name: widget.idName,
+        maxLines: null,
+        keyboardType: TextInputType.multiline,
+        decoration: InputDecoration(
+          labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: OutlineInputBorder(),
+        ),
+        validator: (value) {
+          if ((value == null || value.isEmpty) && widget.required) {
+            return 'Dieses Feld darf nicht leer sein.';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
