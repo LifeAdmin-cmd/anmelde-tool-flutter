@@ -35,10 +35,6 @@ class FormWidget extends StatefulWidget {
 class _FormWidgetState extends State<FormWidget> {
   int _currentPosition = 0;
 
-  Map<int, Map<String, dynamic>> pageData = {};
-
-  List<Map<String, dynamic>> registeredPersons = [];
-
   late final int _totalPages;
   late final List<GlobalKey<FormBuilderState>> formKeys;
 
@@ -48,7 +44,7 @@ class _FormWidgetState extends State<FormWidget> {
     _totalPages = widget.modules.length;
     formKeys = List.generate(
       _totalPages,
-      (_) => GlobalKey<FormBuilderState>(),
+          (_) => GlobalKey<FormBuilderState>(),
     );
   }
 
@@ -81,10 +77,11 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   Widget build(BuildContext context) {
     final List<dynamic> moduleData = widget.modules;
+
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
-    final registeredPersons = anmeldeProvider.registeredPersons;
+
     final int personenIndex =
-        widget.modules.indexWhere((obj) => obj["title"] == "Personen");
+    widget.modules.indexWhere((obj) => obj["title"] == "Personen");
     return isLoading ? Center(child: SpinKitRing(color: Colors.black,),) : SingleChildScrollView(
       child: Column(
         children: [
@@ -145,12 +142,11 @@ class _FormWidgetState extends State<FormWidget> {
 
           FormBuilder(
               key: formKeys[_currentPosition],
-              initialValue: pageData[_currentPosition] ?? {},
+              initialValue: anmeldeProvider.pageData[_currentPosition] ?? {},
               child: moduleData[_currentPosition]['title'] != "Personen"
                   ? ModuleBuilder(
                       module: moduleData[_currentPosition],
-                      currentPageData:
-                          pageData[_currentPosition] ?? {}, // <-- Add this line
+                      currentPageData: anmeldeProvider.pageData[_currentPosition] ?? {}
                     )
                   : PersonenForm(
                       genders: widget.genders,
@@ -188,7 +184,7 @@ class _FormWidgetState extends State<FormWidget> {
                     ),
                     onPressed: () {
                       if (formKeys[_currentPosition].currentState != null) {
-                        pageData[_currentPosition] = formKeys[_currentPosition]
+                        anmeldeProvider.pageData[_currentPosition] = formKeys[_currentPosition]
                             .currentState!
                             .instantValue;
                         _updatePosition(max(--_currentPosition, 0));
@@ -205,7 +201,7 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () async {
-                      if (registeredPersons.isEmpty &&
+                      if (anmeldeProvider.registeredPersons.isEmpty &&
                           _currentPosition == personenIndex) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -237,21 +233,26 @@ class _FormWidgetState extends State<FormWidget> {
 
                           // adding persons into pageData
                           final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
-                          pageData[personenIndex] = {"persons": anmeldeProvider.registeredPersons};
+                          anmeldeProvider.addPageData(personenIndex, {"persons": anmeldeProvider.registeredPersons});
 
-                          print(pageData);
-
-                          final stringKeyedMap = pageData.map(
-                              (key, value) => MapEntry(key.toString(), value));
+                          final stringKeyedMap = anmeldeProvider.pageData.map((int key, dynamic value) {
+                            if (value is Map) {
+                              return MapEntry(key.toString(), value.map((innerKey, innerValue) => MapEntry(innerKey.toString(), innerValue)));
+                            } else {
+                              return MapEntry(key.toString(), value);
+                            }
+                          });
 
                           final convertedData = convertDateTime({"pageData": stringKeyedMap});
+
+                          print(convertedData);
 
                           final response = await http.post(
                             Uri.parse('https://api.larskra.eu/anmeldung-test'),
                             headers: {
                               'Content-Type': 'application/json',
                             },
-                            body: json.encode({"pageData": convertedData}),
+                            body: json.encode(convertedData),
                           );
 
                           setState(() {
@@ -283,7 +284,7 @@ class _FormWidgetState extends State<FormWidget> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      if (registeredPersons.isEmpty &&
+                      if (anmeldeProvider.registeredPersons.isEmpty &&
                           _currentPosition == personenIndex) {
                         // Show a warning, e.g., using a snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -298,7 +299,7 @@ class _FormWidgetState extends State<FormWidget> {
                             formKeys[_currentPosition]
                                 .currentState!
                                 .validate()) {
-                          pageData[_currentPosition] =
+                          anmeldeProvider.pageData[_currentPosition] =
                               formKeys[_currentPosition]
                                   .currentState!
                                   .instantValue;

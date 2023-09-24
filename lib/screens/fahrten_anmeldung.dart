@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
 import 'package:http/http.dart' as http;
@@ -21,16 +22,28 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
   List<dynamic> genders = [];
   List<dynamic> eatingHabits = [];
   List<Map<String, dynamic>> fetchedPersons = [];
+  Map<String, dynamic> loadedAnmeldung = {};
   late bool isLoading;
 
   Future<void> fetchData() async {
     isLoading = true;
+
+    Map<int, Map<String, dynamic>> convertPageData(Map<String, dynamic> originalPageData) {
+      Map<int, Map<String, dynamic>> transformedData = {};
+
+      originalPageData.forEach((key, value) {
+        transformedData[int.parse(key)] = value as Map<String, dynamic>;
+      });
+
+      return transformedData;
+    }
 
     final List<http.Response> responses = await Future.wait([
       http.get(Uri.parse('https://api.larskra.eu/modules')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
       http.get(Uri.parse('https://api.larskra.eu/persons')),
+      http.get(Uri.parse('https://api.larskra.eu/fahrten/${widget.fahrtenId}/anmeldung'))
     ]);
 
     // Check if all responses have status code 200
@@ -43,20 +56,55 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         genders = json.decode(utf8.decode(responses[1].bodyBytes));
         eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
         fetchedPersons = (json.decode(utf8.decode(responses[3].bodyBytes)) as List).cast<Map<String, dynamic>>();
+        loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
         isLoading = false;
 
-        final personsProvider = Provider.of<AnmeldeProvider>(context, listen: false);
-        personsProvider.clearPersons();
+        /// clean data before using model again
+        final anmeldeProvider = Provider.of<AnmeldeProvider>(
+            context, listen: false);
+        anmeldeProvider.clearData();
+
+        if (loadedAnmeldung.isNotEmpty) {
+
+          loadedAnmeldung['pageData'] = (loadedAnmeldung['pageData'] as Map<String, dynamic>).map<int, dynamic>(
+                  (key, value) => MapEntry(int.parse(key), value)
+          );
+
+          final int personenIndex =
+          modules.indexWhere((obj) => obj["title"] == "Personen");
+
+          bool isSubset(Map subset, Map superset) {
+            for (final key in subset.keys) {
+              if (!superset.containsKey(key)) {
+                return false;
+              }
+
+              if (subset[key] is List && superset[key] is List) {
+                if (!(const ListEquality().equals(
+                    subset[key], superset[key]))) {
+                  return false;
+                }
+              } else if (subset[key] != superset[key]) {
+                return false;
+              }
+            }
+            return true;
+          }
+
+          final loadedPersons = (loadedAnmeldung['pageData'][personenIndex]['persons'] as List)
+              .cast<Map<String, dynamic>>();
+          fetchedPersons.removeWhere((person) =>
+              loadedPersons.any((loadedPerson) =>
+                  isSubset(person, loadedPerson)));
+
+          anmeldeProvider.initPageDate(loadedAnmeldung['pageData']);
+          for (var person in loadedPersons) {
+            anmeldeProvider.addRegisteredPerson(person);
+          }
+        }
 
         for (var person in fetchedPersons) {
-          if (person['birthday'] != null) {
-            person['birthday'] = DateTime.parse(person['birthday'] as String);
-          }
-          if (person['eatingHabits'] != null) {
-            List<String> personEatingHabits = (person['eatingHabits'] as List).map((item) => item.toString()).toList();
-            person['eatingHabits'] = personEatingHabits;
-          }
-          personsProvider.addSavedPerson(person);
+          anmeldeProvider.addSavedPerson(person);
         }
       });
     } else {

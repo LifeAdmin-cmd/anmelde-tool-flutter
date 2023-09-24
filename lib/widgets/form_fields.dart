@@ -36,7 +36,7 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
           if ((value == null || value.isEmpty) && widget.required) {
             return 'Dieses Feld darf nicht leer sein.';
           }
-          if (value != null && !RegExp(widget.regex).hasMatch(value)) {
+          if (value != null && value.isNotEmpty && !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
           return null;
