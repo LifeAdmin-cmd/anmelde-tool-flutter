@@ -263,6 +263,7 @@ class IntegerInput extends StatefulWidget {
   final String labelText;
   final String idName;
   final bool required;
+  final String regex;
   final String regexError;
 
   const IntegerInput({
@@ -270,6 +271,7 @@ class IntegerInput extends StatefulWidget {
     required this.labelText,
     required this.idName,
     this.required = true,
+    this.regex = r'^-?[0-9]+$',
     this.regexError = "Ungültige Eingabe. Nur Ganzzahlen erlaubt.",
   }) : super(key: key);
 
@@ -292,7 +294,7 @@ class _IntegerInputState extends State<IntegerInput> {
           if ((value == null || value.isEmpty) && widget.required) {
             return 'Dieses Feld darf nicht leer sein.';
           }
-          if (value != null && !RegExp(r'^-?[0-9]+$').hasMatch(value)) {
+          if (value != null && !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
           return null;
@@ -306,6 +308,7 @@ class FloatInput extends StatefulWidget {
   final String labelText;
   final String idName;
   final bool required;
+  final String regex;
   final String regexError;
 
   const FloatInput({
@@ -313,6 +316,7 @@ class FloatInput extends StatefulWidget {
     required this.labelText,
     required this.idName,
     this.required = true,
+    this.regex = r'^-?[0-9]*\.?[0-9]+$',
     this.regexError = "Ungültige Eingabe. Nur Fließkommazahlen erlaubt.",
   }) : super(key: key);
 
@@ -337,7 +341,7 @@ class _FloatInputState extends State<FloatInput> {
             return 'Dieses Feld darf nicht leer sein.';
           }
           if (value != null &&
-              !RegExp(r'^-?[0-9]*\.?[0-9]+$').hasMatch(value)) {
+              !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
           return null;
@@ -389,8 +393,10 @@ class _TextFieldInputState extends State<TextFieldInput> {
 
 class TravelAttribute extends StatefulWidget {
   final int? initialTravelType;
+  final String idName;
+  final String labelText;
 
-  const TravelAttribute({super.key, required this.initialTravelType,});
+  const TravelAttribute({super.key, required this.initialTravelType, required this.idName, required this.labelText});
 
   @override
   State<TravelAttribute> createState() => _TravelAttributeState();
@@ -433,8 +439,8 @@ class _TravelAttributeState extends State<TravelAttribute> {
       children: [
         const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
         DropdownInput(
-          labelText: "Reiseart",
-          idName: "travelType",
+          labelText: widget.labelText,
+          idName: widget.idName,
           data: data,
           // 2. Add a listener for when the DropdownInput changes
           onChanged: (newValue) {
@@ -476,8 +482,9 @@ class FahrtenConditionsInput extends StatefulWidget {
   final String urlString;
   final String introText;
   final bool initialValue;
+  final bool required;
 
-  const FahrtenConditionsInput({super.key, required this.labelText, this.urlString = "", required this.idName, this.introText = "", this.initialValue = false});
+  const FahrtenConditionsInput({super.key, required this.labelText, this.urlString = "", required this.idName, this.introText = "", this.initialValue = false, this.required = true});
 
   @override
   State<FahrtenConditionsInput> createState() => _FahrtenConditionsInputState();
@@ -519,7 +526,7 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
               ),
             ),
           ),
-          InputSwitch(labelText: widget.labelText, idName: widget.idName, initialValue: widget.initialValue,),
+          InputSwitch(labelText: widget.labelText, idName: widget.idName, initialValue: widget.initialValue, required: widget.required,),
         ],
       ),
     );

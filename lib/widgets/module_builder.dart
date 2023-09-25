@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:galaxias_anmeldetool/widgets/form_fields.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
     switch (formField['type']) {
       case "stringAttribute": {
-        return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
+        return BuchstabenInput(labelText: formField['label'], idName: formField['id'], required: formField['required'] ?? true,);
       }
       case "booleanAttribute": {
         bool currentValue;
@@ -31,6 +32,8 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         // Check if a value is provided in pageData
         if (widget.currentPageData.containsKey(formField['id'])) {
           currentValue = widget.currentPageData[formField['id']];
+        } else if (formField['initialValue'] != null) {
+          currentValue = formField['initialValue'];
         } else {
           // Only if no value exists in pageData, use the initialValue from the formField (or default to false)
           currentValue = formField['initialValue'] ?? false;
@@ -44,16 +47,16 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         );
       }
       case "integerAttribute": {
-        return IntegerInput(labelText: formField['label'], idName: formField['id']);
+        return IntegerInput(labelText: formField['label'], idName: formField['id'], regex: formField['regex'] ?? r'^-?[0-9]+$', regexError: formField['regexError'] ?? "Ungültige Eingabe. Nur Ganzzahlen erlaubt.", required: formField['reqired'] ?? true,);
       }
       case "floatAttribute": {
-        return FloatInput(labelText: formField['label'], idName: formField['id']);
+        return FloatInput(labelText: formField['label'], idName: formField['id'], regex: formField['regex'] ?? r'^-?[0-9]*\.?[0-9]+$', regexError: formField['regexError'] ?? "Ungültige Eingabe. Nur Fließkommazahlen erlaubt.", required: formField['reqired'] ?? true,);
       }
       case "dateTimeAttribute": {
-        return DateTimeInput(labelText: formField['label'], idName: formField['id']);
+        return DateTimeInput(labelText: formField['label'], idName: formField['id'], required: formField['required'] ?? true, inputType: formField['inputType'] ?? InputType.date, formatString: formField['formatString'] ?? "yyyy-MM-dd",);
       }
       case "textAttribute": {
-        return TextFieldInput(labelText: formField['label'], idName: formField['id']);
+        return TextFieldInput(labelText: formField['label'], idName: formField['id'], required: formField['required'] ?? true,);
       }
       case "travelAttribute": {
         int? findValueForKey(String key) {
@@ -71,7 +74,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         }
 
         var value = findValueForKey('travelType');
-        return TravelAttribute(initialTravelType: value);
+        return TravelAttribute(initialTravelType: value, labelText: formField['label'], idName: formField['id'],);
       }
       case "conditionsAttribute": {
         dynamic findNestedKeyValue(Map<dynamic, dynamic> map, String key) {
@@ -96,11 +99,10 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         var keyValue = findNestedKeyValue(anmeldeProvider.pageData, formField['id']);
         keyValue = keyValue ?? false;
 
-        return FahrtenConditionsInput(labelText: formField['label'], idName: formField['id'], urlString: formField['linkUrl'], initialValue: keyValue,);
+        return FahrtenConditionsInput(labelText: formField['label'], idName: formField['id'], urlString: formField['linkUrl'] ?? "", introText: formField['introText'] ?? "", initialValue: keyValue,);
       }
     }
-
-    return const InputSwitch(idName: 'accept', labelText: 'Test failed', required: true,);
+    return const Placeholder();
   }
 
   @override
