@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class AnmeldeProvider with ChangeNotifier {
@@ -105,6 +107,43 @@ class AnmeldeProvider with ChangeNotifier {
   void removePageData(Map<String, dynamic> pageData) {
     pageData.remove(pageData);
     notifyListeners();
+  }
+
+  /// Fahrten List
+
+  List<dynamic>? _allData;
+  bool _isLoading = false;
+  Map<String, int>? categoryCount;
+
+  bool get isLoading => _isLoading;
+  List<dynamic>? get allData => _allData;
+
+  Future<void> fetchData() async {
+    if (_allData != null) return; // If data already exists, don't refetch
+
+    _isLoading = true;
+    notifyListeners();
+
+    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
+
+    if (response.statusCode == 200) {
+      _allData = json.decode(response.body);
+      categoryCount = countStatusValues(_allData!);
+    } else {
+      // Handle error
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Map<String, int> countStatusValues(List<dynamic> data) {
+    Map<String, int> counts = {};
+    for (var item in data) {
+      final status = item['status'] as String;
+      counts[status] = (counts[status] ?? 0) + 1;
+    }
+    return counts;
   }
 
   /// General Functions

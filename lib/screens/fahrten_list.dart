@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/screens/loading.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_drawer.dart';
+import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import '../widgets/fahrten_cards.dart';
 
@@ -20,7 +22,7 @@ class _FahrtenListState extends State<FahrtenList> {
 
   late List<dynamic> jsonData = []; // To store the JSON data
 
-  late Map<String, int> categoryCount;
+  // late Map<String, int> categoryCount;
 
   bool isLoading = true;
 
@@ -41,28 +43,33 @@ class _FahrtenListState extends State<FahrtenList> {
   void initState() {
     super.initState();
     setNullText();
-    fetchData();
+
+    Future.microtask(() =>
+        Provider.of<AnmeldeProvider>(context, listen: false).fetchData()
+    );
   }
 
   // function to fetch data
-  Future<void> fetchData() async {
-    // TODO update to production URL
-    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> allData = json.decode(response.body);
-        final List<dynamic> categoryData = allData.where((item) => item['status'] == widget.category).toList();
-        categoryCount = countStatusValues(allData);
-        jsonData = categoryData;
-        isLoading = false; // Set isLoading to false when data is loaded
-      });
-    } else {
-      // TODO add error screen
-      isLoading = false;
-      throw Exception('Failed to load data from the API');
-    }
-  }
+  // Future<void> fetchData() async {
+  //   // TODO update to production URL
+  //   final response = await http.get(
+  //       Uri.parse('https://api.larskra.eu/fahrten'));
+  //
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       final List<dynamic> allData = json.decode(response.body);
+  //       final List<dynamic> categoryData = allData.where((
+  //           item) => item['status'] == widget.category).toList();
+  //       categoryCount = countStatusValues(allData);
+  //       jsonData = categoryData;
+  //       isLoading = false; // Set isLoading to false when data is loaded
+  //     });
+  //   } else {
+  //     // TODO add error screen
+  //     isLoading = false;
+  //     throw Exception('Failed to load data from the API');
+  //   }
+  // }
 
   // Function to count status values
   Map<String, int> countStatusValues(List<dynamic> data) {
@@ -76,14 +83,28 @@ class _FahrtenListState extends State<FahrtenList> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AnmeldeProvider>(context);
+
+    // Guard clauses for null values
+    if (provider.categoryCount == null || provider.allData == null) {
+      return const Scaffold(
+        body: Loading(),
+      );
+    }
+
     return Scaffold(
       appBar: DPVAppBar(title: widget.title),
-      drawer: isLoading ? const Loading() : DPVDrawer(categoryCount: categoryCount),
-      body: isLoading
+      drawer: provider.isLoading
           ? const Loading()
-          : FahrtenCards(category: widget.category, data: jsonData, nullText: nullText,), // Pass jsonData to FahrtenCards
+          : DPVDrawer(categoryCount: provider.categoryCount!),
+      body: provider.isLoading
+          ? const Loading()
+          : FahrtenCards(
+        category: widget.category,
+        data: provider.allData!.where((item) => item['status'] == widget.category).toList(),
+        nullText: nullText,
+      ),
     );
   }
 }
-
 // TODO Fahrten nach Datum sortieren
