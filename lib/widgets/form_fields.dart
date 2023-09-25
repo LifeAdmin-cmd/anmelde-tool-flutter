@@ -453,7 +453,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
       ],
     );
   }
-  // TODO wrong field in editing view
+
   String _getInputLabelForDropdownValue(String? value) {
     switch (value) {
       case "1":

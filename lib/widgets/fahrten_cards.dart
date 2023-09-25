@@ -65,12 +65,11 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                               ),
                               const SizedBox(height: 15.0,),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  /// Anmelde und Info Button (conditional)
                                   Expanded( // Wrap the button in an Expanded widget
                                     child: OutlinedButton(
                                       onPressed: () {
-                                        // TODO add info page template for Fahrten
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => FahrtenAnsicht(fahrtenData: item),
@@ -78,17 +77,17 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                         );
                                       },
                                       style: OutlinedButton.styleFrom(
-                                        backgroundColor: Colors.green[700],
+                                        backgroundColor: widget.category != "pending" ? Colors.blue[800] : Colors.green[700],
                                         foregroundColor: Colors.white,
                                       ),
-                                      child: const Row(
+                                      child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center, // Center the content horizontally
                                         children: [
-                                          Text('Anmelden'),
+                                          Text(widget.category != "pending" ? "Ansehen" : 'Anmelden'),
                                           Padding(
-                                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                                             child: Icon(
-                                              Icons.edit,
+                                              widget.category != "pending" ? Icons.visibility : Icons.edit,
                                               size: 20,
                                             ),
                                           ),
@@ -115,6 +114,4 @@ class _FahrtenCardsState extends State<FahrtenCards> {
   }
 }
 
-// TODO handle asynchronous suspension error -> after clicking through pages quickly // probably fixed
-// TODO infinite loadingScreen on Android // might be fixed
 // TODO change "Edit" button according to category -> category "expired" should just have an "information" button
