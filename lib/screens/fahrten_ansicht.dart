@@ -300,7 +300,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             )
             : FloatingActionButton.extended(
               onPressed: () async {
-                // TODO Logic for "Ansicht"
+                // TODO Logic for "Ansicht" and remove button when no "Anmeldung" is there to be seen
                 // bool? result = await Navigator.of(context).push(
                 //   MaterialPageRoute(
                 //     builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
