@@ -174,7 +174,7 @@ class _PersonenFormState extends State<PersonenForm> {
                 ),
               ),
               Text(
-                "Hier werden alle von dir zu gespeicherten Personen angezeigt. Füge sie der Anmeldung hinzu um sie anzumelden.",
+                "Hier werden alle von dir gespeicherten Personen angezeigt. Du musst der Anmeldung mindestens eine Person hinzufügen",
                 textAlign: TextAlign.start,
               ),
             ],

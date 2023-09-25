@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/widgets/form_fields.dart';
+import 'package:provider/provider.dart';
+
+import '../models/anmelde_provider.dart';
 
 class ModuleBuilder extends StatefulWidget {
   final Map<String, dynamic> module;
@@ -16,21 +19,8 @@ class ModuleBuilder extends StatefulWidget {
 }
 
 class _ModuleBuilderState extends State<ModuleBuilder> {
-  Widget _buildRow(
-    List<Widget> widgets, {
-    EdgeInsets padding = const EdgeInsets.fromLTRB(12, 12, 12, 12),
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceAround,
-  }) {
-    return Padding(
-      padding: padding,
-      child: Row(
-        mainAxisAlignment: mainAxisAlignment,
-        children: widgets,
-      ),
-    );
-  }
-
   Widget getFormField(formField) {
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
     switch (formField['type']) {
       case "stringAttribute": {
         return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
@@ -53,18 +43,60 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
           initialValue: currentValue,
         );
       }
-
       case "integerAttribute": {
-        return Text("Placeholder");
+        return IntegerInput(labelText: formField['label'], idName: formField['id']);
       }
       case "floatAttribute": {
-        return Text("Placeholder");
+        return FloatInput(labelText: formField['label'], idName: formField['id']);
       }
       case "dateTimeAttribute": {
         return DateTimeInput(labelText: formField['label'], idName: formField['id']);
       }
+      case "textAttribute": {
+        return TextFieldInput(labelText: formField['label'], idName: formField['id']);
+      }
       case "travelAttribute": {
-        return Text("Placeholder");
+        int? findValueForKey(String key) {
+          for (var entry in anmeldeProvider.pageData.entries) {
+            if (entry.value.containsKey(key)) {
+              var potentialValue = entry.value[key];
+              if (potentialValue is int) {
+                return potentialValue;
+              } else if (potentialValue is String) {
+                return int.tryParse(potentialValue);  // will return null if parsing fails
+              }
+            }
+          }
+          return null;
+        }
+
+        var value = findValueForKey('travelType');
+        return TravelAttribute(initialTravelType: value);
+      }
+      case "conditionsAttribute": {
+        dynamic findNestedKeyValue(Map<dynamic, dynamic> map, String key) {
+          // If the current map contains the key, return its value
+          if (map.containsKey(key)) {
+            return map[key];
+          }
+
+          // If not, iterate over all map values and recursively check if any of them contains the key
+          for (var value in map.values) {
+            if (value is Map) {
+              final result = findNestedKeyValue(value, key);
+              if (result != null) {
+                return result;
+              }
+            }
+          }
+
+          return null; // return null if the key wasn't found
+        }
+
+        var keyValue = findNestedKeyValue(anmeldeProvider.pageData, formField['id']);
+        keyValue = keyValue ?? false;
+
+        return FahrtenConditionsInput(labelText: formField['label'], idName: formField['id'], urlString: formField['linkUrl'], initialValue: keyValue,);
       }
     }
 
@@ -91,7 +123,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         const Divider(indent: 50.0, endIndent: 50.0,),
 
         Visibility(
-          visible: module['introText'] != "", // TODO maybe add error handling for missing value in json
+          visible: module['introText'].isNotEmpty && module['introText'] != null, // TODO maybe add error handling for missing value in json
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
               child: Column(
