@@ -90,12 +90,16 @@ class DateTimeInput extends StatefulWidget {
   final String labelText;
   final String idName;
   final bool required;
+  final InputType inputType;
+  final String formatString;
 
   const DateTimeInput({
     super.key,
     required this.labelText,
     required this.idName,
     this.required = true,
+    this.inputType = InputType.date,
+    this.formatString = "yyyy-MM-dd",
   });
 
   @override
@@ -109,8 +113,8 @@ class _DateTimeInputState extends State<DateTimeInput> {
       padding: const EdgeInsets.all(12.0,),
       child: FormBuilderDateTimePicker(
         name: widget.idName,
-        inputType: InputType.date,
-        format: DateFormat("yyyy-MM-dd"),
+        inputType: widget.inputType,
+        format: DateFormat(widget.formatString),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : "" ),
         ),
@@ -132,6 +136,7 @@ class DropdownInput extends StatefulWidget {
   final bool required;
   final String placeholder;
   final List<dynamic> data;
+  final Function(String?)? onChanged;
 
   const DropdownInput({
     Key? key,
@@ -139,7 +144,8 @@ class DropdownInput extends StatefulWidget {
     required this.idName,
     required this.data,
     this.required = true,
-    this.placeholder = "Bitte wählen ...", // Include the placeholder in the constructor
+    this.placeholder = "Bitte wählen ...",
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -180,6 +186,7 @@ class _DropdownInputState extends State<DropdownInput> {
               }
               return null;
             },
+            onChanged: widget.onChanged,
           ),
         ],
       ),
@@ -365,7 +372,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
         keyboardType: TextInputType.multiline,
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
@@ -376,5 +383,76 @@ class _TextFieldInputState extends State<TextFieldInput> {
       ),
     );
   }
+}
+
+class TravelAttribute extends StatefulWidget {
+  const TravelAttribute({super.key});
+
+  @override
+  State<TravelAttribute> createState() => _TravelAttributeState();
+}
+
+class _TravelAttributeState extends State<TravelAttribute> {
+  String? _currentSelection; // 1. Add variable to hold current value from the dropdown
+  List<dynamic> data = [
+    {
+      "id": 1,
+      "name": "Öffis"
+    },
+    {
+      "id": 2,
+      "name": "Reisebus"
+    },
+    {
+      "id": 3,
+      "name": "PKW"
+    },
+    {
+      "id": 4,
+      "name": "Sonstiges"
+    }
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
+        DropdownInput(
+          labelText: "Reiseart",
+          idName: "travelType",
+          data: data,
+          // 2. Add a listener for when the DropdownInput changes
+          onChanged: (newValue) {
+            setState(() {
+              _currentSelection = newValue;
+            });
+          },
+        ),
+        const DateTimeInput(labelText: "Datum und Uhrzeit", idName: "travelDateTime", inputType: InputType.both, formatString: 'yyyy-MM-dd HH:mm'),
+        _currentSelection == "3"
+        ? IntegerInput(labelText: _getInputLabelForDropdownValue(_currentSelection), idName: "reiseDetails")
+        : BuchstabenInput(
+          labelText: _getInputLabelForDropdownValue(_currentSelection),
+          idName: "reiseDetails",
+        ),
+      ],
+    );
+  }
+
+  String _getInputLabelForDropdownValue(String? value) {
+    switch (value) {
+      case "1":
+        return "Welcher Bahnhof?";
+      case "2":
+        return "Welche Reisegesellschaft?";
+      case "3":
+        return "Anzahl der PKW";
+      case "4":
+        return "Wie reist du an?";
+      default:
+        return "Details";
+    }
+  }
+
 }
 

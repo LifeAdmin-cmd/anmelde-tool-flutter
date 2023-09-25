@@ -62,11 +62,11 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
       case "dateTimeAttribute": {
         return DateTimeInput(labelText: formField['label'], idName: formField['id']);
       }
-      case "travelAttribute": {
-        return Text("Placeholder");
-      }
       case "textAttribute": {
         return TextFieldInput(labelText: formField['label'], idName: formField['id']);
+      }
+      case "travelAttribute": {
+        return const TravelAttribute();
       }
     }
 
