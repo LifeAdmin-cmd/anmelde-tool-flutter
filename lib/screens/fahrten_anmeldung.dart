@@ -45,9 +45,9 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         modules = json.decode(utf8.decode(responses[0].bodyBytes));
         genders = json.decode(utf8.decode(responses[1].bodyBytes));
         eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
-        fetchedPersons = (json.decode(utf8.decode(responses[3].bodyBytes)) as List).cast<Map<String, dynamic>>();
+        var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
+        fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
         loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
-        isLoading = false;
 
         /// clean data before using model again
         final anmeldeProvider = Provider.of<AnmeldeProvider>(
@@ -55,7 +55,6 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         anmeldeProvider.clearData();
 
         if (loadedAnmeldung.isNotEmpty) {
-
           loadedAnmeldung['pageData'] = (loadedAnmeldung['pageData'] as Map<String, dynamic>).map<int, dynamic>(
                   (key, value) => MapEntry(int.parse(key), value)
           );
@@ -97,6 +96,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
           anmeldeProvider.addSavedPerson(person);
         }
       });
+      isLoading = false;
     } else {
       // TODO: Handle the error or show an error screen
       isLoading = false;

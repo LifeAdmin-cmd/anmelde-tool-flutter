@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class BuchstabenInput extends StatefulWidget {
   final String labelText;
@@ -456,7 +458,13 @@ class _TravelAttributeState extends State<TravelAttribute> {
 }
 
 class FahrtenConditionsInput extends StatefulWidget {
-  const FahrtenConditionsInput({super.key});
+  final String labelText;
+  final String idName;
+  final String urlString;
+  final String introText;
+  final bool initialValue;
+
+  const FahrtenConditionsInput({super.key, required this.labelText, this.urlString = "", required this.idName, this.introText = "", this.initialValue = false});
 
   @override
   State<FahrtenConditionsInput> createState() => _FahrtenConditionsInputState();
@@ -465,10 +473,42 @@ class FahrtenConditionsInput extends StatefulWidget {
 class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          Visibility(
+            visible: widget.introText.isNotEmpty,
+            child: Text(
+              widget.introText,
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
+          Visibility(
+            visible: widget.urlString.isNotEmpty,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Bedingungen',
+                    style: const TextStyle(color: Colors.blue),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        const url = 'http://stammgalaxias.de/wp-content/uploads/2022/11/fahrtenbedinungen.pdf';
+                        if (await canLaunchUrlString(url)) {
+                          await launchUrlString(url);
+                        } else {
+                          throw 'Konnte $url nicht öffnen!';
+                        }
+                      },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          InputSwitch(labelText: widget.labelText, idName: widget.idName, initialValue: widget.initialValue,),
+        ],
+      ),
     );
   }
 }

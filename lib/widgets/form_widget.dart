@@ -77,7 +77,6 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   Widget build(BuildContext context) {
     final List<dynamic> moduleData = widget.modules;
-
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
 
     final int personenIndex =
@@ -244,8 +243,6 @@ class _FormWidgetState extends State<FormWidget> {
                           });
 
                           final convertedData = convertDateTime({"pageData": stringKeyedMap});
-
-                          print(convertedData);
 
                           final response = await http.post(
                             Uri.parse('https://api.larskra.eu/anmeldung-test'),
