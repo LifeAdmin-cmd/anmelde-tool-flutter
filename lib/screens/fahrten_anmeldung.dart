@@ -28,16 +28,6 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
   Future<void> fetchData() async {
     isLoading = true;
 
-    Map<int, Map<String, dynamic>> convertPageData(Map<String, dynamic> originalPageData) {
-      Map<int, Map<String, dynamic>> transformedData = {};
-
-      originalPageData.forEach((key, value) {
-        transformedData[int.parse(key)] = value as Map<String, dynamic>;
-      });
-
-      return transformedData;
-    }
-
     final List<http.Response> responses = await Future.wait([
       http.get(Uri.parse('https://api.larskra.eu/modules')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),

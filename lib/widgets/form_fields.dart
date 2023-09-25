@@ -453,6 +453,23 @@ class _TravelAttributeState extends State<TravelAttribute> {
         return "Details";
     }
   }
+}
 
+class FahrtenConditionsInput extends StatefulWidget {
+  const FahrtenConditionsInput({super.key});
+
+  @override
+  State<FahrtenConditionsInput> createState() => _FahrtenConditionsInputState();
+}
+
+class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+
+      ],
+    );
+  }
 }
 

@@ -11,6 +11,28 @@ class AnmeldeProvider with ChangeNotifier {
 
   /// Person Functions
 
+
+  bool _looksLikeDateTime(String value) {
+    try {
+      DateTime.parse(value);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Convert any string that looks like DateTime to DateTime object in Map
+  dynamic _convertNestedStringDateToDateTime(dynamic item) {
+    if (item is String && _looksLikeDateTime(item)) {
+      return DateTime.parse(item);
+    } else if (item is Map) {
+      item.updateAll((key, value) => _convertNestedStringDateToDateTime(value));
+      return item;
+    } else {
+      return item;
+    }
+  }
+
   Map<String, dynamic> handleWrongDataTypes(Map<String, dynamic> person) {
     if (person['birthday'] != null) {
       person['birthday'] = DateTime.parse(person['birthday'] as String);
@@ -62,16 +84,19 @@ class AnmeldeProvider with ChangeNotifier {
   /// pageData Functions
 
   void initPageDate(Map<int, dynamic> pageData) {
+    _convertNestedStringDateToDateTime(pageData);
     _pageData = pageData;
     notifyListeners();
   }
 
   void addPageData(int index, Map<String, dynamic> pageData) {
+    _convertNestedStringDateToDateTime(pageData);
     _pageData[index] = pageData;
     notifyListeners();
   }
 
   void updatePageData(int index, Map<String, dynamic> pageData) {
+    _convertNestedStringDateToDateTime(pageData);
     _pageData[index] = pageData;
     notifyListeners();
   }
