@@ -118,8 +118,8 @@ class AnmeldeProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   List<dynamic>? get allData => _allData;
 
-  Future<void> fetchData() async {
-    if (_allData != null) return; // If data already exists, don't refetch
+  Future<void> fetchData({bool forceUpdate = false}) async {
+    if (!forceUpdate && _allData != null) return;
 
     _isLoading = true;
     notifyListeners();

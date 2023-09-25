@@ -3,10 +3,8 @@ import 'package:galaxias_anmeldetool/screens/loading.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_app_bar.dart';
 import 'package:galaxias_anmeldetool/widgets/dpv_drawer.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
-import 'package:http/http.dart' as http;
+import 'package:galaxias_anmeldetool/widgets/fahrten_cards.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import '../widgets/fahrten_cards.dart';
 
 class FahrtenList extends StatefulWidget {
   final String category;
@@ -44,9 +42,8 @@ class _FahrtenListState extends State<FahrtenList> {
     super.initState();
     setNullText();
 
-    Future.microtask(() =>
-        Provider.of<AnmeldeProvider>(context, listen: false).fetchData()
-    );
+    Future.microtask(
+        () => Provider.of<AnmeldeProvider>(context, listen: false).fetchData());
   }
 
   // function to fetch data
@@ -99,10 +96,23 @@ class _FahrtenListState extends State<FahrtenList> {
           : DPVDrawer(categoryCount: provider.categoryCount!),
       body: provider.isLoading
           ? const Loading()
-          : FahrtenCards(
-        category: widget.category,
-        data: provider.allData!.where((item) => item['status'] == widget.category).toList(),
-        nullText: nullText,
+          : RefreshIndicator(
+              onRefresh: () async {
+                await Provider.of<AnmeldeProvider>(context, listen: false)
+                    .fetchData(forceUpdate: true);
+              },
+              child: FahrtenCards(
+                category: widget.category,
+                data: provider.allData!
+                    .where((item) => item['status'] == widget.category)
+                    .toList(),
+                nullText: nullText,
+                onRefresh: () {  // Here is where the fetchData is triggered
+                  Provider.of<AnmeldeProvider>(context, listen: false)
+                      .fetchData(forceUpdate: true);
+                },
+              )
+
       ),
     );
   }
