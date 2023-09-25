@@ -388,7 +388,9 @@ class _TextFieldInputState extends State<TextFieldInput> {
 }
 
 class TravelAttribute extends StatefulWidget {
-  const TravelAttribute({super.key});
+  final int? initialTravelType;
+
+  const TravelAttribute({super.key, required this.initialTravelType,});
 
   @override
   State<TravelAttribute> createState() => _TravelAttributeState();
@@ -414,6 +416,17 @@ class _TravelAttributeState extends State<TravelAttribute> {
       "name": "Sonstiges"
     }
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.initialTravelType != null) {
+      _currentSelection = widget.initialTravelType.toString();
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -440,7 +453,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
       ],
     );
   }
-
+  // TODO wrong field in editing view
   String _getInputLabelForDropdownValue(String? value) {
     switch (value) {
       case "1":

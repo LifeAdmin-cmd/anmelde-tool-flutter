@@ -20,6 +20,7 @@ class ModuleBuilder extends StatefulWidget {
 
 class _ModuleBuilderState extends State<ModuleBuilder> {
   Widget getFormField(formField) {
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
     switch (formField['type']) {
       case "stringAttribute": {
         return BuchstabenInput(labelText: formField['label'], idName: formField['id']);
@@ -55,10 +56,24 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         return TextFieldInput(labelText: formField['label'], idName: formField['id']);
       }
       case "travelAttribute": {
-        return const TravelAttribute();
+        int? findValueForKey(String key) {
+          for (var entry in anmeldeProvider.pageData.entries) {
+            if (entry.value.containsKey(key)) {
+              var potentialValue = entry.value[key];
+              if (potentialValue is int) {
+                return potentialValue;
+              } else if (potentialValue is String) {
+                return int.tryParse(potentialValue);  // will return null if parsing fails
+              }
+            }
+          }
+          return null;
+        }
+
+        var value = findValueForKey('travelType');
+        return TravelAttribute(initialTravelType: value);
       }
       case "conditionsAttribute": {
-        final anmeldeProvider = Provider.of<AnmeldeProvider>(context, listen: false);
         dynamic findNestedKeyValue(Map<dynamic, dynamic> map, String key) {
           // If the current map contains the key, return its value
           if (map.containsKey(key)) {
