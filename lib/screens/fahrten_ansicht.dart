@@ -24,7 +24,6 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
         DateTime.parse(fahrtenData['registrationStart']);
     DateTime registrationEnd =
         DateTime.parse(fahrtenData['registrationDeadline']);
-
     return Scaffold(
       appBar: const DPVAppBar(title: 'Übersicht'),
       body: SingleChildScrollView(
@@ -269,7 +268,8 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
           children: <Widget>[
             const SizedBox(width: 16),
             // TODO make ActionButton only visible when editing is possible
-            FloatingActionButton.extended(
+          fahrtenData['status'] == "pending"
+          ? FloatingActionButton.extended(
               onPressed: () async {
                 bool? result = await Navigator.of(context).push(
                   MaterialPageRoute(
@@ -297,6 +297,36 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                 color: Colors.white,
               ),
               backgroundColor: Colors.green[600],
+            )
+            : FloatingActionButton.extended(
+              onPressed: () async {
+                // TODO Logic for "Ansicht"
+                // bool? result = await Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
+                //   ),
+                // );
+                //
+                // if (result != null && result) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Anmeldung verschickt!'),
+                //       backgroundColor: Colors.green,
+                //       duration: Duration(seconds: 3),
+                //     ),
+                //   );
+                // }
+              },
+              label: const Text(
+                'Ansicht',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: const Icon(
+                Icons.visibility,
+                size: 18,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.blue[800],
             ),
           ],
         ),
