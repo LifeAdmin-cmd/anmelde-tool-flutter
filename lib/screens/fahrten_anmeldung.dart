@@ -29,29 +29,29 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
     isLoading = true;
 
     final List<http.Response> responses = await Future.wait([
-      http.get(Uri.parse('https://api.larskra.eu/modules')),
+      http.get(Uri.parse('http://localhost:3042/modules')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
       http.get(Uri.parse('https://api.larskra.eu/persons')),
-      http.get(Uri.parse('https://api.larskra.eu/fahrten/${widget.fahrtenId}/anmeldung'))
+      http.get(Uri.parse('http://localhost:3042/api/event/register/${anmeldeProvider.testId}')),
     ]);
 
     // Check if all responses have status code 200
     final allResponsesSuccessful = responses.every((response) =>
     response.statusCode == 200);
 
+    // TODO API Routes changed for uxd testing
     if (allResponsesSuccessful) {
       setState(() {
         anmeldeProvider.initModules(json.decode(utf8.decode(responses[0].bodyBytes)));
         anmeldeProvider.initGenders(json.decode(utf8.decode(responses[1].bodyBytes)));
         anmeldeProvider.initEatingHabits(json.decode(utf8.decode(responses[2].bodyBytes)));
-        var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
-        fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
+        /// disabled usage of fetched persons for uxd test
+        // var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
+        // fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
         loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
 
         /// clean data before using model again
-        // final anmeldeProvider = Provider.of<AnmeldeProvider>(
-        //     context, listen: false);
         anmeldeProvider.clearData();
 
         if (loadedAnmeldung.isNotEmpty) {

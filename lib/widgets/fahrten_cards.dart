@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/screens/fahrten_ansicht.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../models/anmelde_provider.dart';
 
 class FahrtenCards extends StatefulWidget {
   final String category;
@@ -51,15 +54,17 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                     ElevatedButton(
                       onPressed: widget.onRefresh,
                       child: const Row(
-                        mainAxisSize: MainAxisSize.min, // This will make the Row as small as possible
+                        mainAxisSize: MainAxisSize
+                            .min, // This will make the Row as small as possible
                         children: [
                           Text("Aktualisieren"),
-                          SizedBox(width: 8), // To provide a little space between the text and the icon
+                          SizedBox(
+                              width:
+                                  8), // To provide a little space between the text and the icon
                           Icon(Icons.refresh),
                         ],
                       ),
                     ),
-
                   ],
                 )
               : Expanded(
@@ -112,28 +117,66 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                               );
                                             },
                                             style: OutlinedButton.styleFrom(
-                                              backgroundColor:
-                                                  widget.category != "pending"
-                                                      ? Colors.blue[800]
-                                                      : Colors.green[700],
+                                              backgroundColor: (item[
+                                                              'existingRegister'] !=
+                                                          null &&
+                                                      DateTime.now().isBefore(
+                                                          DateTime.parse(item[
+                                                              'lastPossibleUpdate'])))
+                                                  ? Colors.orange[600]
+                                                  : (DateTime.now().isBefore(
+                                                          DateTime.parse(item[
+                                                              'registrationDeadline']))
+                                                      ? Colors.green[600]
+                                                      : (item['existingRegister'] !=
+                                                              null
+                                                          ? Colors.blue[800]
+                                                          : Colors
+                                                              .transparent)),
                                               foregroundColor: Colors.white,
                                             ),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .center, // Center the content horizontally
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                    widget.category != "pending"
-                                                        ? "Ansehen"
-                                                        : 'Anmelden'),
+                                                  (item['existingRegister'] !=
+                                                              null &&
+                                                          DateTime.now().isBefore(
+                                                              DateTime.parse(item[
+                                                                  'lastPossibleUpdate'])))
+                                                      ? 'Bearbeiten'
+                                                      : (DateTime.now().isBefore(
+                                                              DateTime.parse(item[
+                                                                  'registrationDeadline']))
+                                                          ? 'Anmelden'
+                                                          : (item['existingRegister'] !=
+                                                                  null
+                                                              ? 'Ansicht'
+                                                              : '')),
+                                                ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.fromLTRB(
                                                           8, 0, 0, 0),
                                                   child: Icon(
-                                                    widget.category != "pending"
-                                                        ? Icons.visibility
-                                                        : Icons.edit,
+                                                    (item['existingRegister'] !=
+                                                                null &&
+                                                            DateTime.now()
+                                                                .isBefore(DateTime
+                                                                    .parse(item[
+                                                                        'lastPossibleUpdate'])))
+                                                        ? Icons.edit
+                                                        : (DateTime.now()
+                                                                .isBefore(DateTime
+                                                                    .parse(item[
+                                                                        'registrationDeadline']))
+                                                            ? Icons.edit
+                                                            : (item['existingRegister'] !=
+                                                                    null
+                                                                ? Icons
+                                                                    .visibility
+                                                                : null)),
                                                     size: 20,
                                                   ),
                                                 ),

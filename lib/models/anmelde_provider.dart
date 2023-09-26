@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -124,7 +125,9 @@ class AnmeldeProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
+    if (testId.isEmpty) initTestId();
+
+    final response = await http.get(Uri.parse('http://localhost:3042/api/event/$testId'));
 
     if (response.statusCode == 200) {
       _allData = json.decode(response.body);
@@ -206,4 +209,23 @@ class AnmeldeProvider with ChangeNotifier {
   ];
 
   List<dynamic> get anreiseData => _anreiseData;
+
+
+  /// Testing utils
+
+  String _testId = "";
+
+  String get testId => _testId;
+
+  String _generateRandomString(int length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random();
+
+    return String.fromCharCodes(Iterable.generate(length, (_) => characters.codeUnitAt(random.nextInt(characters.length))));
+  }
+
+  void initTestId() {
+    _testId = _generateRandomString(32);
+  }
+
 }

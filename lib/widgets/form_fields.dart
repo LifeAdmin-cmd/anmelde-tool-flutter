@@ -518,6 +518,7 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
               style: const TextStyle(color: Colors.black),
             ),
           ),
+          const SizedBox(height: 8.0,),
           Visibility(
             visible: widget.urlString.isNotEmpty,
             child: RichText(

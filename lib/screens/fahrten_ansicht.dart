@@ -1,3 +1,4 @@
+import 'package:galaxias_anmeldetool/screens/fahrten_list.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -321,6 +322,10 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                             duration: Duration(seconds: 3),
                           ),
                         );
+                        // Navigator.pushReplacementNamed(context, '/', arguments: {'forceUpdate': true});
+                        Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (context) => const FahrtenList(category: "pending", title: "Aktive Anmeldephase", forceUpdate: true,)
+                        ));
                       }
                     },
                     label: const Text(
@@ -355,6 +360,10 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                 duration: Duration(seconds: 3),
                               ),
                             );
+                            // Navigator.pushReplacementNamed(context, '/', arguments: {'forceUpdate': true});
+                            Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => const FahrtenList(category: "pending", title: "Aktive Anmeldephase", forceUpdate: true,)
+                            ));
                           }
                         },
                         label: const Text(
