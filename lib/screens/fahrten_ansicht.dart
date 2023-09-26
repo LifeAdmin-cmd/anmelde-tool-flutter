@@ -132,7 +132,9 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               fontSize: 17.0,
                             ),
                           ),
-                          const SizedBox(height: 8.0,),
+                          const SizedBox(
+                            height: 8.0,
+                          ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,
@@ -142,10 +144,26 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Name:", style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Text("Beschr.:", style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Text("Straße:", style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Text("Ort:", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text(
+                                      "Name:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "Beschr.:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "Straße:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "Ort:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -155,9 +173,12 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                   children: [
                                     Text(fahrtenData['location']['name']),
                                     // TODO find solution to overflow problem
-                                    Text(fahrtenData['location']['description'],),
+                                    Text(
+                                      fahrtenData['location']['description'],
+                                    ),
                                     Text(fahrtenData['location']['address']),
-                                    Text("${fahrtenData['location']['zipCode']['zipCode']} ${fahrtenData['location']['zipCode']['city']}"),
+                                    Text(
+                                        "${fahrtenData['location']['zipCode']['zipCode']} ${fahrtenData['location']['zipCode']['city']}"),
                                   ],
                                 ),
                               ),
@@ -170,25 +191,26 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
 
                   // Einladungstext Card
                   Card(
-                    margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Einladungstext",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17.0,
+                      margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Einladungstext",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.0,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0,),
-                          Html(data: fahrtenData['longDescription']),
-                        ],
-                      ),
-                    )
-                  ),
+                            const SizedBox(
+                              height: 8.0,
+                            ),
+                            Html(data: fahrtenData['longDescription']),
+                          ],
+                        ),
+                      )),
 
                   // Preise und Anmeldeoptionen
                   Card(
@@ -211,7 +233,8 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                 shrinkWrap: true,
                                 itemCount: fahrtenData['bookingOptions'].length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  final item = fahrtenData['bookingOptions'][index];
+                                  final item =
+                                      fahrtenData['bookingOptions'][index];
                                   // build Price cards
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 2.0),
@@ -224,17 +247,27 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                             const Column(
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 6.0),
-                                                  child: Icon(Icons.person, size: 18,),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 6.0),
+                                                  child: Icon(
+                                                    Icons.person,
+                                                    size: 18,
+                                                  ),
                                                 )
                                               ],
                                             ),
                                             Column(
                                               children: [
                                                 Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
+                                                    Text(
+                                                      item['name'],
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                     const Text(" - "),
                                                     Text(item['price'] + "€"),
                                                   ],
@@ -254,7 +287,6 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -268,69 +300,92 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
           children: <Widget>[
             const SizedBox(width: 16),
             // TODO make ActionButton only visible when editing is possible
-            (fahrtenData['existingRegister'] != null)
+            (fahrtenData['existingRegister'] != null &&
+                    DateTime.now().isBefore(
+                        DateTime.parse(fahrtenData['lastPossibleUpdate'])))
                 ? FloatingActionButton.extended(
-              onPressed: () async {
-                // TODO: Logic for "Bearbeiten"
-              },
-              label: const Text(
-                'Bearbeiten',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: const Icon(
-                Icons.edit,
-                size: 18,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.orange[600], // Choose an appropriate color
-            )
-                : (fahrtenData['status'] == "pending"
-                ? FloatingActionButton.extended(
-              onPressed: () async {
-                bool? result = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FahrtenAnmeldung(
-                        bookingOptions: fahrtenData['bookingOptions'],
-                        fahrtenId: fahrtenData['id']),
-                  ),
-                );
+                    onPressed: () async {
+                      bool? result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => FahrtenAnmeldung(
+                              bookingOptions: fahrtenData['bookingOptions'],
+                              fahrtenId: fahrtenData['id']),
+                        ),
+                      );
 
-                if (result != null && result) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Anmeldung verschickt!'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 3),
+                      if (result != null && result) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Änderungen gespeichert!'),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
+                    },
+                    label: const Text(
+                      'Bearbeiten',
+                      style: TextStyle(color: Colors.white),
                     ),
-                  );
-                }
-              },
-              label: const Text(
-                'Anmelden',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: const Icon(
-                Icons.edit,
-                size: 18,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.green[600],
-            )
-                : FloatingActionButton.extended(
-              onPressed: () async {
-                // TODO Logic for "Ansicht" and remove button when no "Anmeldung" is there to be seen
-              },
-              label: const Text(
-                'Ansicht',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: const Icon(
-                Icons.visibility,
-                size: 18,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.blue[800],
-            ))
+                    icon: const Icon(
+                      Icons.edit,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    backgroundColor:
+                        Colors.orange[600], // Choose an appropriate color
+                  )
+                : (DateTime.now().isBefore(
+                        DateTime.parse(fahrtenData['registrationDeadline']))
+                    ? FloatingActionButton.extended(
+                        onPressed: () async {
+                          bool? result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FahrtenAnmeldung(
+                                  bookingOptions: fahrtenData['bookingOptions'],
+                                  fahrtenId: fahrtenData['id']),
+                            ),
+                          );
+
+                          if (result != null && result) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Anmeldung verschickt!'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        },
+                        label: const Text(
+                          'Anmelden',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        backgroundColor: Colors.green[600],
+                      )
+                    : Visibility(
+                        visible: fahrtenData['existingRegister'] != null,
+                        child: FloatingActionButton.extended(
+                          onPressed: () async {
+                            // TODO Logic for "Ansicht" and remove button when no "Anmeldung" is there to be seen
+                          },
+                          label: const Text(
+                            'Ansicht',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          icon: const Icon(
+                            Icons.visibility,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          backgroundColor: Colors.blue[800],
+                        ),
+                      ))
           ],
         ),
       ),
@@ -363,10 +418,10 @@ class PhaseInfoWidget extends StatelessWidget {
           backgroundColor: Colors.amber.shade600,
         );
       } else if (now.isAfter(date) && anmeldephase && !start) {
-          return RoundIcon(
-            iconData: Icons.close,
-            backgroundColor: Colors.grey.shade700,
-          );
+        return RoundIcon(
+          iconData: Icons.close,
+          backgroundColor: Colors.grey.shade700,
+        );
       } else if (now.isAfter(date)) {
         return const RoundIcon(
           iconData: Icons.check,

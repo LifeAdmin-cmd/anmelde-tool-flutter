@@ -452,7 +452,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
         const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
         DropdownInput(
           labelText: widget.labelText,
-          idName: widget.idName,
+          idName: "travelType",
           data: data,
           initialValue: _currentSelection,
           onChanged: (newValue) {
@@ -467,6 +467,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
         : BuchstabenInput(
           labelText: _getInputLabelForDropdownValue(_currentSelection),
           idName: "reiseDetails",
+          regex: r"",
         ),
       ],
     );
@@ -545,3 +546,69 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
   }
 }
 
+class DataCard extends StatelessWidget {
+  final Map<String, dynamic> data;
+
+  DataCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    var person = data["pageData"]["1"]["persons"][0];
+
+    return Card(
+      elevation: 4.0,
+      margin: const EdgeInsets.all(16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Datenschutz and Conditions
+            Row(
+              children: <Widget>[
+                Icon(data["pageData"]["0"]["datenschutz"] ? Icons.check_box : Icons.check_box_outline_blank),
+                const SizedBox(width: 8.0),
+                const Text("Datenschutz"),
+                const Spacer(),
+                Icon(data["pageData"]["0"]["fahrtenConditions"] ? Icons.check_box : Icons.check_box_outline_blank),
+                const SizedBox(width: 8.0),
+                const Text("Fahrten Conditions"),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+
+            // Personal details
+            const Text("Personal Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const SizedBox(height: 8.0),
+            Text("Name: ${person["firstName"]} ${person["lastName"]}"),
+            Text("Scout Name: ${person["scoutName"]}"),
+            Text("Gender: ${person["gender"]}"),
+            Text("Birthday: ${DateTime.parse(person["birthday"]).toLocal()}"),
+            Text("Address: ${person["address"]}"),
+            Text("PLZ: ${person["plz"]}"),
+            Text("Booking Option: ${person["bookingOption"]}"),
+            Text("Eating Habits: ${person["eatingHabits"].join(', ')}"),
+            const SizedBox(height: 16.0),
+
+            // Travel details
+            const Text("Travel Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const SizedBox(height: 8.0),
+            Text("Person Count: ${data["pageData"]["2"]["personCount"]}"),
+            Text("Reise Details: ${data["pageData"]["2"]["reiseDetails"]}"),
+            Text("Travel Date Time: ${DateTime.parse(data["pageData"]["2"]["travelDateTime"]).toLocal()}"),
+            Text("Travel Type: ${data["pageData"]["2"]["travelType"]}"),
+            const SizedBox(height: 16.0),
+
+            // Additional Notice
+            const Text("Additional Notice", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const SizedBox(height: 8.0),
+            Text(data["pageData"]["3"]["additionalNotice"].replaceAll('\\n', '\n')),
+          ],
+        ),
+      ),
+    );
+  }
+}
