@@ -446,7 +446,6 @@ class _TravelAttributeState extends State<TravelAttribute> {
 
   @override
   Widget build(BuildContext context) {
-    print(_currentSelection);
     return Column(
       children: [
         const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
@@ -546,15 +545,15 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
   }
 }
 
-class DataCard extends StatelessWidget {
-  final Map<String, dynamic> data;
+class SummaryCard extends StatelessWidget {
+  final Map<int, dynamic> data;
+  final List<Map<String, dynamic>> persons;
 
-  DataCard({required this.data});
+  const SummaryCard({super.key, required this.data, required this.persons});
 
   @override
   Widget build(BuildContext context) {
-    var person = data["pageData"]["1"]["persons"][0];
-
+    // TODO make card load the values dynamically
     return Card(
       elevation: 4.0,
       margin: const EdgeInsets.all(16.0),
@@ -568,44 +567,57 @@ class DataCard extends StatelessWidget {
           children: <Widget>[
             // Datenschutz and Conditions
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Icon(data["pageData"]["0"]["datenschutz"] ? Icons.check_box : Icons.check_box_outline_blank),
-                const SizedBox(width: 8.0),
-                const Text("Datenschutz"),
-                const Spacer(),
-                Icon(data["pageData"]["0"]["fahrtenConditions"] ? Icons.check_box : Icons.check_box_outline_blank),
-                const SizedBox(width: 8.0),
-                const Text("Fahrten Conditions"),
+                Row(
+                  children: [
+                    Icon(data[0]["datenschutz"] ? Icons.check_box : Icons.check_box_outline_blank),
+                    const SizedBox(width: 4.0,),
+                    const Text("Datenschutz"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(data[0]["fahrtenConditions"] ? Icons.check_box : Icons.check_box_outline_blank),
+                    const SizedBox(width: 4.0,),
+                    const Text("Fahrtenbedingungen"),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 16.0),
 
             // Personal details
             const Text("Personal Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
-            const SizedBox(height: 8.0),
-            Text("Name: ${person["firstName"]} ${person["lastName"]}"),
-            Text("Scout Name: ${person["scoutName"]}"),
-            Text("Gender: ${person["gender"]}"),
-            Text("Birthday: ${DateTime.parse(person["birthday"]).toLocal()}"),
-            Text("Address: ${person["address"]}"),
-            Text("PLZ: ${person["plz"]}"),
-            Text("Booking Option: ${person["bookingOption"]}"),
-            Text("Eating Habits: ${person["eatingHabits"].join(', ')}"),
-            const SizedBox(height: 16.0),
+            ...persons.map((person) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 8.0),
+                Text("Name: ${person["firstName"]} ${person["lastName"]}"),
+                Text("Fahrtenname: ${person["scoutName"] ?? ""}"),
+                Text("Geschlecht: ${person["gender"]}"),
+                Text("Geburtstag: ${DateFormat('dd.MM.yyyy').format(person["birthday"])}"),
+                Text("Addresse: ${person["address"]}"),
+                Text("PLZ: ${person["plz"]}"),
+                Text("Buchungsoption: ${person["bookingOption"]}"),
+                Text("Essensbesonderheiten: ${person["eatingHabits"].join(', ')}"),
+                const SizedBox(height: 16.0),
+              ],
+            )).toList(),
 
             // Travel details
-            const Text("Travel Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const Text("Anreise", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
             const SizedBox(height: 8.0),
-            Text("Person Count: ${data["pageData"]["2"]["personCount"]}"),
-            Text("Reise Details: ${data["pageData"]["2"]["reiseDetails"]}"),
-            Text("Travel Date Time: ${DateTime.parse(data["pageData"]["2"]["travelDateTime"]).toLocal()}"),
-            Text("Travel Type: ${data["pageData"]["2"]["travelType"]}"),
+            Text("Personen Anzahl: ${data[2]["personCount"]}"),
+            Text("Reise Details: ${data[2]["reiseDetails"]}"),
+            Text("Ankunftszeit: ${DateFormat('dd.MM.yyyy HH:mm').format(data[2]["travelDateTime"])}"),
+            Text("Reiseart: ${data[2]["travelType"]}"),
             const SizedBox(height: 16.0),
 
             // Additional Notice
-            const Text("Additional Notice", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const Text("Zusätzliche Bemerkung", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
             const SizedBox(height: 8.0),
-            Text(data["pageData"]["3"]["additionalNotice"].replaceAll('\\n', '\n')),
+            Text(data[3]["additionalNotice"].replaceAll('\\n', '\n')),
           ],
         ),
       ),
