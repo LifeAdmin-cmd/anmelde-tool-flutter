@@ -182,4 +182,28 @@ class AnmeldeProvider with ChangeNotifier {
     _savedPersons = [];
     _pageData = {};
   }
+
+  String getInputLabelForDropdownValue(String? value) {
+    switch (value) {
+      case "1":
+        return "Welcher Bahnhof?";
+      case "2":
+        return "Welche Reisegesellschaft?";
+      case "3":
+        return "Anzahl der PKW";
+      case "4":
+        return "Wie reist du an?";
+      default:
+        return "Details";
+    }
+  }
+
+  final List<dynamic> _anreiseData = [
+    {"id": 1, "name": "Öffis"},
+    {"id": 2, "name": "Reisebus"},
+    {"id": 3, "name": "PKW"},
+    {"id": 4, "name": "Sonstiges"}
+  ];
+
+  List<dynamic> get anreiseData => _anreiseData;
 }

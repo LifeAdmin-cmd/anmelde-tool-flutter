@@ -101,7 +101,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
         return FahrtenConditionsInput(labelText: formField['label'], idName: formField['id'], urlString: formField['linkUrl'] ?? "", introText: formField['introText'] ?? "", initialValue: keyValue,);
       }
       case "summaryAttribute": {
-        return SummaryCard(data: anmeldeProvider.pageData, persons: anmeldeProvider.registeredPersons,);
+        return SummaryCard(pageData: anmeldeProvider.pageData, modules: anmeldeProvider.modules, persons: anmeldeProvider.registeredPersons,);
       }
     }
     return const Placeholder();
