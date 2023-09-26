@@ -18,9 +18,6 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
-  // List<dynamic> modules = [];
-  // List<dynamic> genders = [];
-  // List<dynamic> eatingHabits = [];
   List<Map<String, dynamic>> fetchedPersons = [];
   Map<String, dynamic> loadedAnmeldung = {};
   late bool isLoading;

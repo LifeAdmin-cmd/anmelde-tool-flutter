@@ -73,9 +73,7 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
           return null;
         }
 
-        print(anmeldeProvider.pageData.entries);
         var value = findValueForKey('travelType');
-        print(value);
         return TravelAttribute(initialTravelType: value, labelText: formField['label'], idName: formField['id'],);
       }
       case "conditionsAttribute": {

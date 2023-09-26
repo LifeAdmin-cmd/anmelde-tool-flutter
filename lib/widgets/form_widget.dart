@@ -11,18 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
 
 class FormWidget extends StatefulWidget {
-  // final dynamic modules;
-  // final dynamic genders;
-  // final dynamic eatingHabits;
+
   final List<dynamic> bookingOptions;
   final String fahrtenId;
   final List<Map<String, dynamic>> fetchedPersons;
 
   const FormWidget({
     super.key,
-    // required this.modules,
-    // required this.genders,
-    // required this.eatingHabits,
     required this.fetchedPersons,
     required this.bookingOptions,
     required this.fahrtenId,

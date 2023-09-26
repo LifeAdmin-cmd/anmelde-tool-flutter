@@ -588,7 +588,7 @@ class SummaryCard extends StatelessWidget {
             const SizedBox(height: 16.0),
 
             // Personal details
-            const Text("Personal Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            const Text("Personen", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
             ...persons.map((person) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
