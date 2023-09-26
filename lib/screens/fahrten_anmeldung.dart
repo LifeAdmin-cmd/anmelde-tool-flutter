@@ -18,14 +18,17 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
-  List<dynamic> modules = [];
-  List<dynamic> genders = [];
-  List<dynamic> eatingHabits = [];
+  // List<dynamic> modules = [];
+  // List<dynamic> genders = [];
+  // List<dynamic> eatingHabits = [];
   List<Map<String, dynamic>> fetchedPersons = [];
   Map<String, dynamic> loadedAnmeldung = {};
   late bool isLoading;
 
   Future<void> fetchData() async {
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(
+        context, listen: false);
+
     isLoading = true;
 
     final List<http.Response> responses = await Future.wait([
@@ -42,16 +45,16 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
 
     if (allResponsesSuccessful) {
       setState(() {
-        modules = json.decode(utf8.decode(responses[0].bodyBytes));
-        genders = json.decode(utf8.decode(responses[1].bodyBytes));
-        eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
+        anmeldeProvider.initModules(json.decode(utf8.decode(responses[0].bodyBytes)));
+        anmeldeProvider.initGenders(json.decode(utf8.decode(responses[1].bodyBytes)));
+        anmeldeProvider.initEatingHabits(json.decode(utf8.decode(responses[2].bodyBytes)));
         var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
         fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
         loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
 
         /// clean data before using model again
-        final anmeldeProvider = Provider.of<AnmeldeProvider>(
-            context, listen: false);
+        // final anmeldeProvider = Provider.of<AnmeldeProvider>(
+        //     context, listen: false);
         anmeldeProvider.clearData();
 
         if (loadedAnmeldung.isNotEmpty) {
@@ -60,7 +63,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
           );
 
           final int personenIndex =
-          modules.indexWhere((obj) => obj["title"] == "Personen");
+          anmeldeProvider.modules.indexWhere((obj) => obj["title"] == "Personen");
 
           bool isSubset(Map subset, Map superset) {
             for (final key in subset.keys) {
@@ -118,7 +121,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
         padding: const EdgeInsets.all(8.0),
         child: Card(
           color: Colors.grey[200],
-          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits, fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
+          child: FormWidget(fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
         ),
       ),
     );

@@ -146,6 +146,35 @@ class AnmeldeProvider with ChangeNotifier {
     return counts;
   }
 
+  /// Basic API route data
+
+  List<dynamic> _modules = [];
+  List<dynamic> _genders = [];
+  List<dynamic> _eatingHabits = [];
+
+  List<dynamic> get modules => _modules;
+  List<dynamic> get genders => _genders;
+  List<dynamic> get eatingHabits => _eatingHabits;
+
+  void initModules(List<dynamic> modules) {
+    _convertNestedStringDateToDateTime(modules);
+    _modules = modules;
+    notifyListeners();
+  }
+
+  void initGenders(List<dynamic> genders) {
+    _convertNestedStringDateToDateTime(genders);
+    _genders = genders;
+    notifyListeners();
+  }
+
+  void initEatingHabits(List<dynamic> eatingHabits) {
+    _convertNestedStringDateToDateTime(eatingHabits);
+    _eatingHabits = eatingHabits;
+    notifyListeners();
+  }
+
+
   /// General Functions
 
   void clearData() {

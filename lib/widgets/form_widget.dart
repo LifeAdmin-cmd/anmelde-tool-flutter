@@ -11,18 +11,18 @@ import 'package:provider/provider.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
 
 class FormWidget extends StatefulWidget {
-  final dynamic modules;
-  final dynamic genders;
-  final dynamic eatingHabits;
+  // final dynamic modules;
+  // final dynamic genders;
+  // final dynamic eatingHabits;
   final List<dynamic> bookingOptions;
   final String fahrtenId;
   final List<Map<String, dynamic>> fetchedPersons;
 
   const FormWidget({
     super.key,
-    required this.modules,
-    required this.genders,
-    required this.eatingHabits,
+    // required this.modules,
+    // required this.genders,
+    // required this.eatingHabits,
     required this.fetchedPersons,
     required this.bookingOptions,
     required this.fahrtenId,
@@ -33,6 +33,7 @@ class FormWidget extends StatefulWidget {
 }
 
 class _FormWidgetState extends State<FormWidget> {
+  late final anmeldeProvider;
   int _currentPosition = 0;
 
   late final int _totalPages;
@@ -40,8 +41,10 @@ class _FormWidgetState extends State<FormWidget> {
 
   @override
   void initState() {
+    anmeldeProvider = Provider.of<AnmeldeProvider>(
+        context, listen: false);
     super.initState();
-    _totalPages = widget.modules.length;
+    _totalPages = anmeldeProvider.modules.length;
     formKeys = List.generate(
       _totalPages,
           (_) => GlobalKey<FormBuilderState>(),
@@ -76,11 +79,11 @@ class _FormWidgetState extends State<FormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> moduleData = widget.modules;
     final anmeldeProvider = Provider.of<AnmeldeProvider>(context);
+    final List<dynamic> moduleData = anmeldeProvider.modules;
 
     final int personenIndex =
-    widget.modules.indexWhere((obj) => obj["title"] == "Personen");
+    anmeldeProvider.modules.indexWhere((obj) => obj["title"] == "Personen");
     return isLoading ? Center(child: SpinKitRing(color: Colors.black,),) : SingleChildScrollView(
       child: Column(
         children: [
@@ -148,8 +151,8 @@ class _FormWidgetState extends State<FormWidget> {
                       currentPageData: anmeldeProvider.pageData[_currentPosition] ?? {}
                     )
                   : PersonenForm(
-                      genders: widget.genders,
-                      eatingHabits: widget.eatingHabits,
+                      genders: anmeldeProvider.genders,
+                      eatingHabits: anmeldeProvider.eatingHabits,
                       savedPersons: widget.fetchedPersons,
                       bookingOptions: widget.bookingOptions,
                     )),
