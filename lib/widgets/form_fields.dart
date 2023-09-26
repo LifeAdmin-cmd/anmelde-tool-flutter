@@ -138,6 +138,7 @@ class DropdownInput extends StatefulWidget {
   final bool required;
   final String placeholder;
   final List<dynamic> data;
+  final String? initialValue;
   final Function(String?)? onChanged;
 
   const DropdownInput({
@@ -147,6 +148,7 @@ class DropdownInput extends StatefulWidget {
     required this.data,
     this.required = true,
     this.placeholder = "Bitte wählen ...",
+    this.initialValue,
     this.onChanged,
   }) : super(key: key);
 
@@ -155,6 +157,14 @@ class DropdownInput extends StatefulWidget {
 }
 
 class _DropdownInputState extends State<DropdownInput> {
+  String? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.initialValue; // Initialize _selectedValue with initialValue
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -189,6 +199,7 @@ class _DropdownInputState extends State<DropdownInput> {
               return null;
             },
             onChanged: widget.onChanged,
+            initialValue: _selectedValue,
           ),
         ],
       ),
@@ -435,6 +446,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
 
   @override
   Widget build(BuildContext context) {
+    print(_currentSelection);
     return Column(
       children: [
         const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
@@ -442,7 +454,7 @@ class _TravelAttributeState extends State<TravelAttribute> {
           labelText: widget.labelText,
           idName: widget.idName,
           data: data,
-          // 2. Add a listener for when the DropdownInput changes
+          initialValue: _currentSelection,
           onChanged: (newValue) {
             setState(() {
               _currentSelection = newValue;

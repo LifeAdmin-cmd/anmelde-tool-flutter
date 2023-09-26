@@ -268,12 +268,30 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
           children: <Widget>[
             const SizedBox(width: 16),
             // TODO make ActionButton only visible when editing is possible
-          fahrtenData['status'] == "pending"
-          ? FloatingActionButton.extended(
+            (fahrtenData['existingRegister'] != null)
+                ? FloatingActionButton.extended(
+              onPressed: () async {
+                // TODO: Logic for "Bearbeiten"
+              },
+              label: const Text(
+                'Bearbeiten',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: const Icon(
+                Icons.edit,
+                size: 18,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.orange[600], // Choose an appropriate color
+            )
+                : (fahrtenData['status'] == "pending"
+                ? FloatingActionButton.extended(
               onPressed: () async {
                 bool? result = await Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
+                    builder: (context) => FahrtenAnmeldung(
+                        bookingOptions: fahrtenData['bookingOptions'],
+                        fahrtenId: fahrtenData['id']),
                   ),
                 );
 
@@ -298,24 +316,9 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
               ),
               backgroundColor: Colors.green[600],
             )
-            : FloatingActionButton.extended(
+                : FloatingActionButton.extended(
               onPressed: () async {
                 // TODO Logic for "Ansicht" and remove button when no "Anmeldung" is there to be seen
-                // bool? result = await Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (context) => FahrtenAnmeldung(bookingOptions: fahrtenData['bookingOptions'], fahrtenId: fahrtenData['id']),
-                //   ),
-                // );
-                //
-                // if (result != null && result) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Anmeldung verschickt!'),
-                //       backgroundColor: Colors.green,
-                //       duration: Duration(seconds: 3),
-                //     ),
-                //   );
-                // }
               },
               label: const Text(
                 'Ansicht',
@@ -327,7 +330,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                 color: Colors.white,
               ),
               backgroundColor: Colors.blue[800],
-            ),
+            ))
           ],
         ),
       ),
