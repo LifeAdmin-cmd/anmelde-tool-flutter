@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galaxias_anmeldetool/screens/fahrten_ansicht.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
-import '../models/anmelde_provider.dart';
 
 class FahrtenCards extends StatefulWidget {
   final String category;
@@ -128,11 +125,7 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                                           DateTime.parse(item[
                                                               'registrationDeadline']))
                                                       ? Colors.green[600]
-                                                      : (item['existingRegister'] !=
-                                                              null
-                                                          ? Colors.blue[800]
-                                                          : Colors
-                                                              .transparent)),
+                                                      : Colors.blue[800]),
                                               foregroundColor: Colors.white,
                                             ),
                                             child: Row(
@@ -150,10 +143,7 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                                               DateTime.parse(item[
                                                                   'registrationDeadline']))
                                                           ? 'Anmelden'
-                                                          : (item['existingRegister'] !=
-                                                                  null
-                                                              ? 'Ansicht'
-                                                              : '')),
+                                                          : 'Ansicht'),
                                                 ),
                                                 Padding(
                                                   padding:
@@ -172,11 +162,7 @@ class _FahrtenCardsState extends State<FahrtenCards> {
                                                                     .parse(item[
                                                                         'registrationDeadline']))
                                                             ? Icons.edit
-                                                            : (item['existingRegister'] !=
-                                                                    null
-                                                                ? Icons
-                                                                    .visibility
-                                                                : null)),
+                                                            : Icons.visibility),
                                                     size: 20,
                                                   ),
                                                 ),

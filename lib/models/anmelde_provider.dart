@@ -127,7 +127,7 @@ class AnmeldeProvider with ChangeNotifier {
 
     if (testId.isEmpty) initTestId();
 
-    final response = await http.get(Uri.parse('http://localhost:3042/api/event/$testId'));
+    final response = await http.get(Uri.parse('https://test-api.larskra.eu/api/event/$testId'));
 
     if (response.statusCode == 200) {
       _allData = json.decode(response.body);

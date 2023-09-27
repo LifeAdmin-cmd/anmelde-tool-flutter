@@ -29,11 +29,11 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
     isLoading = true;
 
     final List<http.Response> responses = await Future.wait([
-      http.get(Uri.parse('http://localhost:3042/modules')),
+      http.get(Uri.parse('https://test-api.larskra.eu/modules')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
       http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
       http.get(Uri.parse('https://api.larskra.eu/persons')),
-      http.get(Uri.parse('http://localhost:3042/api/event/register/${anmeldeProvider.testId}')),
+      http.get(Uri.parse('https://test-api.larskra.eu/api/event/register/${anmeldeProvider.testId}')),
     ]);
 
     // Check if all responses have status code 200

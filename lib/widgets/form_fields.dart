@@ -594,6 +594,7 @@ class SummaryCard extends StatelessWidget {
 
       if (module['title'] == "Personen") {
         contentWidgets.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Personen",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
