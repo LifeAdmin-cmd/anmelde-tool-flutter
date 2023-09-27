@@ -611,9 +611,9 @@ class SummaryCard extends StatelessWidget {
                             "Geburtstag: ${DateFormat('dd.MM.yyyy').format(person["birthday"])}"),
                         Text("Addresse: ${person["address"]}"),
                         Text("PLZ: ${person["plz"]}"),
-                        Text("Buchungsoption: ${person["bookingOption"]}"),
+                        Text("Buchungsoption: ${person["bookingOption"] ?? ""}"),
                         Text(
-                            "Essensbesonderheiten: ${person["eatingHabits"].join(', ')}"),
+                            "Essensbesonderheiten: ${(person["eatingHabits"]?.join(', ')) ?? "-"}"),
                         const SizedBox(height: 16.0),
                       ],
                     ))

@@ -37,40 +37,34 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                   // Title Cad
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Column(
-                            children: [
-                              Icon(Icons.calendar_today_outlined),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${fahrtenData['name']}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 17.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_today_outlined),
+                          const SizedBox(width: 16.0),  // Provides a bit of spacing between the icon and the text.
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${fahrtenData['name']}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17.0,
+                                  ),
                                 ),
-                              ),
-                              // TODO handle wrap long text error
-                              Text(
-                                "${fahrtenData['shortDescription']}",
-                                style: const TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  fontSize: 15.0,
+                                Text(
+                                  "${fahrtenData['shortDescription']}",
+                                  style: const TextStyle(
+                                    fontSize: 15.0,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
