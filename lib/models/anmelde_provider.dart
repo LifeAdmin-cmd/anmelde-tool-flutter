@@ -133,7 +133,7 @@ class AnmeldeProvider with ChangeNotifier {
       _allData = json.decode(response.body);
       categoryCount = countStatusValues(_allData!);
     } else {
-      // Handle error
+      throw Exception('Fetching error /event');
     }
 
     _isLoading = false;
@@ -212,7 +212,7 @@ class AnmeldeProvider with ChangeNotifier {
 
 
   /// Testing utils
-
+  // TODO remove testing block from project
   String _testId = "";
 
   String get testId => _testId;

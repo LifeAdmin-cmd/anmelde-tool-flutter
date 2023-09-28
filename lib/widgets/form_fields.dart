@@ -673,7 +673,7 @@ class SummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Anzahl Personen: ${moduleData['personCount']}"),
-                  Text("Reiseart: ${provider.anreiseData.firstWhere((element) => element["id"] == 3, orElse: () => null)['name']}"),
+                  Text("Reiseart: ${provider.anreiseData.firstWhere((element) => element["id"] == int.parse(moduleData['travelType']), orElse: () => null)['name']}"),
                   Text("Zeitpunkt: ${DateFormat('dd.MM.yyy HH:mm').format(moduleData['travelDateTime'])}"),
                   Text("${provider.getInputLabelForDropdownValue(moduleData['travelType'])}: ${moduleData['reiseDetails']}"),
                 ],
