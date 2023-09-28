@@ -14,6 +14,118 @@ class FahrtenAnsicht extends StatefulWidget {
   State<FahrtenAnsicht> createState() => _FahrtenAnsichtState();
 }
 
+class CustomProgressBar extends StatelessWidget {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const CustomProgressBar({
+    Key? key,
+    required this.startDate,
+    required this.endDate,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final totalDuration = endDate.difference(startDate).inDays;
+    final elapsedDuration = now.difference(startDate).inDays;
+
+    double progress = elapsedDuration / totalDuration;
+    if (now.isAfter(endDate)) {
+      progress = 1.0; // Set to 100% if both dates are in the past
+    }
+
+    if (now.isBefore(startDate)) {
+      progress = 0.0;
+    }
+
+    Color determineColor(double progress) {
+      if (progress >= 0.9) {
+        return Colors.red;
+      } else if (progress >= 0.75) {
+        return Colors.deepOrange;
+      }
+      return Colors.green;
+    }
+
+    return Column(
+      children: [
+        const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            'Anmeldephase',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15.0,
+            ),
+          )
+        ]),
+        const SizedBox(
+          height: 12.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Start\n${DateFormat("d. MMM").format(startDate)}",
+                style: const TextStyle(
+                  fontSize: 12.0,
+                )),
+            now.isAfter(endDate)
+                ? const Text("Abgelaufen",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                    ))
+                : RichText(
+                    text: TextSpan(
+                      text: 'Noch ',
+                      style:
+                          const TextStyle(fontSize: 12.0, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: '${endDate.difference(now).inDays}',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const TextSpan(
+                            text: ' Tage',
+                            style: TextStyle(fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
+            Text(
+              "Ende\n${DateFormat("d. MMM").format(endDate)}",
+              style: const TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Stack(
+          children: [
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            FractionallySizedBox(
+              widthFactor: progress,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: determineColor(progress),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
   Map<String, dynamic> get fahrtenData => widget.fahrtenData;
 
@@ -34,7 +146,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             Expanded(
               child: Column(
                 children: [
-                  // Title Cad
+                  /// Title Cad
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
                     child: Padding(
@@ -42,7 +154,9 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                       child: Row(
                         children: [
                           const Icon(Icons.calendar_today_outlined),
-                          const SizedBox(width: 16.0),  // Provides a bit of spacing between the icon and the text.
+                          const SizedBox(
+                              width:
+                                  16.0), // Provides a bit of spacing between the icon and the text.
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,51 +182,130 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                     ),
                   ),
 
-                  // Termine Card
+                  /// Termine Card
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Termine',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Termine',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0,),
+                          Column(
+                            children: [
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Veranstaltung',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12.0,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today),
+                                      const SizedBox(width: 8.0,),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text("Start:"),
+                                          Text(DateFormat("d. MMM").format(eventStart))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today),
+                                      const SizedBox(width: 8.0,),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text("Ende:"),
+                                          Text(DateFormat("d. MMM").format(eventEnd))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 8.0,),
+                          const Divider(height: 25.0, indent: 10.0, endIndent: 10.0,),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: CustomProgressBar(
+                                startDate: registrationStart,
+                                endDate: registrationEnd,
                               ),
                             ),
-                            PhaseInfoWidget(
-                              phase: 'Anmeldephase',
-                              date: registrationStart,
-                              startOrEnde: 'Start',
-                            ),
-                            PhaseInfoWidget(
-                              phase: 'Anmeldephase',
-                              date: registrationEnd,
-                              startOrEnde: 'Ende',
-                            ),
-                            PhaseInfoWidget(
-                              phase: 'Veranstaltungstermin',
-                              date: eventStart,
-                              startOrEnde: 'Start',
-                            ),
-                            PhaseInfoWidget(
-                              phase: 'Veranstaltungstermin',
-                              date: eventEnd,
-                              startOrEnde: 'Ende',
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
-                  // Location Card
+                  // Card(
+                  //   margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
+                  //   child: Row(
+                  //     children: [
+                  //       Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           const Padding(
+                  //             padding: EdgeInsets.all(8.0),
+                  //             child: Text(
+                  //               'Termine',
+                  //               style: TextStyle(
+                  //                 fontSize: 17,
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           PhaseInfoWidget(
+                  //             phase: 'Anmeldephase',
+                  //             date: registrationStart,
+                  //             startOrEnde: 'Start',
+                  //           ),
+                  //           PhaseInfoWidget(
+                  //             phase: 'Anmeldephase',
+                  //             date: registrationEnd,
+                  //             startOrEnde: 'Ende',
+                  //           ),
+                  //           PhaseInfoWidget(
+                  //             phase: 'Veranstaltungstermin',
+                  //             date: eventStart,
+                  //             startOrEnde: 'Start',
+                  //           ),
+                  //           PhaseInfoWidget(
+                  //             phase: 'Veranstaltungstermin',
+                  //             date: eventEnd,
+                  //             startOrEnde: 'Ende',
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+
+                  /// Location Card
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
                     child: Padding(
@@ -184,7 +377,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                     ),
                   ),
 
-                  // Einladungstext Card
+                  /// Einladungstext Card
                   Card(
                       margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
                       child: Padding(
@@ -207,7 +400,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                         ),
                       )),
 
-                  // Preise und Anmeldeoptionen
+                  /// Preise und Anmeldeoptionen
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 0, 8, 15),
                     child: Padding(
@@ -317,9 +510,14 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                           ),
                         );
                         // Navigator.pushReplacementNamed(context, '/', arguments: {'forceUpdate': true});
-                        Navigator.pushReplacement(context, MaterialPageRoute(
-                            builder: (context) => const FahrtenList(category: "pending", title: "Aktive Anmeldephase", forceUpdate: true,)
-                        ));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FahrtenList(
+                                      category: "pending",
+                                      title: "Aktive Anmeldephase",
+                                      forceUpdate: true,
+                                    )));
                       }
                     },
                     label: const Text(
@@ -355,9 +553,14 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                               ),
                             );
                             // Navigator.pushReplacementNamed(context, '/', arguments: {'forceUpdate': true});
-                            Navigator.pushReplacement(context, MaterialPageRoute(
-                                builder: (context) => const FahrtenList(category: "pending", title: "Aktive Anmeldephase", forceUpdate: true,)
-                            ));
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const FahrtenList(
+                                          category: "pending",
+                                          title: "Aktive Anmeldephase",
+                                          forceUpdate: true,
+                                        )));
                           }
                         },
                         label: const Text(
