@@ -109,7 +109,7 @@ class DateTimeInput extends StatefulWidget {
     required this.idName,
     this.required = true,
     this.inputType = InputType.date,
-    this.formatString = "yyyy-MM-dd",
+    this.formatString = "dd.MM.yyyy",
   });
 
   @override
@@ -126,7 +126,9 @@ class _DateTimeInputState extends State<DateTimeInput> {
       child: FormBuilderDateTimePicker(
         name: widget.idName,
         inputType: widget.inputType,
+        initialEntryMode: DatePickerEntryMode.input,
         format: DateFormat(widget.formatString),
+        locale: const Locale('de', 'DE'),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
           border: const OutlineInputBorder(),
