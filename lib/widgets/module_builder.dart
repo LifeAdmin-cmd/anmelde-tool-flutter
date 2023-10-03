@@ -124,16 +124,18 @@ class _ModuleBuilderState extends State<ModuleBuilder> {
           ),
         ),
 
-        const Divider(indent: 50.0, endIndent: 50.0,),
+        // const Divider(indent: 150.0, endIndent: 150.0,),
 
         Visibility(
           visible: module['introText'].isNotEmpty && module['introText'] != null, // TODO maybe add error handling for missing value in json
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              padding: const EdgeInsets.fromLTRB(12, 5, 12, 20),
               child: Column(
                 children: [
-                  Text(module['introText']),
-                  const Divider(indent: 50.0, endIndent: 50.0,),
+                  Text(module['introText'],
+                  textAlign: TextAlign.center,
+                ),
+                  // const Divider(indent: 100.0, endIndent: 100.0, height: 40.0,),
                 ],
               ),
             )

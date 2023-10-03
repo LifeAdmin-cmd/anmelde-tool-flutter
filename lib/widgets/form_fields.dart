@@ -591,12 +591,24 @@ class SummaryCard extends StatelessWidget {
     );
   }
 
+  bool isModuleDataEmpty(Map<String, dynamic> moduleData) {
+    if (moduleData == null) return true;
+    for (var value in moduleData.values) {
+      if (value != null && value.toString().isNotEmpty) return false;
+    }
+    return true;
+  }
+
   List<Widget> _buildCardContent(provider) {
     List<Widget> contentWidgets = [];
 
     for (var i = 0; i < modules.length; i++) {
       var module = modules[i];
       var moduleData = pageData[i];
+
+      if (isModuleDataEmpty(moduleData) && module['title'] != "Personen") {
+        continue; // Skip this iteration if the module data is empty
+      }
 
       if (module['title'] == "Personen") {
         contentWidgets.add(Column(
@@ -661,7 +673,7 @@ class SummaryCard extends StatelessWidget {
             case "integerAttribute":
             case "floatAttribute":
             case "textAttribute":
-              if (value != null) {
+              if (value != null && value.isNotEmpty) {
                 contentWidgets.add(Text('$label: $value'));
               }
               break;

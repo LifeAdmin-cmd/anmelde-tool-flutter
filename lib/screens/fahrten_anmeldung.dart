@@ -138,10 +138,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
       appBar: const DPVAppBar(title: 'Anmeldung'),
       body: isLoading ? const Loading() : Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Card(
-          color: Colors.grey[200],
-          child: FormWidget(fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
-        ),
+        child: FormWidget(fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
       ),
     );
   }
