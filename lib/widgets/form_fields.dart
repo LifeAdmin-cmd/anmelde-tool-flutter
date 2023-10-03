@@ -36,6 +36,7 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
         name: widget.idName,
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
@@ -128,6 +129,7 @@ class _DateTimeInputState extends State<DateTimeInput> {
         format: DateFormat(widget.formatString),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           // TODO when dynamic initialValue is implemented this needs to be changed
@@ -314,6 +316,7 @@ class _IntegerInputState extends State<IntegerInput> {
             const TextInputType.numberWithOptions(decimal: false, signed: true),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
@@ -360,6 +363,7 @@ class _FloatInputState extends State<FloatInput> {
             const TextInputType.numberWithOptions(decimal: true, signed: true),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
