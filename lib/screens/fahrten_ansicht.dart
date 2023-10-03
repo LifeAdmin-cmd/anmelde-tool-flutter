@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:galaxias_anmeldetool/screens/fahrten_list.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -146,14 +147,15 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
             Expanded(
               child: Column(
                 children: [
-                  /// Title Cad
+                  /// Title Card
                   Card(
                     margin: const EdgeInsets.fromLTRB(8, 15, 8, 15),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined),
+                          // const Icon(Icons.calendar_today_outlined),
+                          SvgPicture.asset("lib/assets/Jurte_BW.svg", height: 45,),
                           const SizedBox(
                               width:
                                   16.0), // Provides a bit of spacing between the icon and the text.
