@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -124,13 +125,15 @@ class AnmeldeProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final response = await http.get(Uri.parse('https://api.larskra.eu/fahrten'));
+    if (testId.isEmpty) initTestId();
+
+    final response = await http.get(Uri.parse('https://test-api.larskra.eu/api/event/$testId'));
 
     if (response.statusCode == 200) {
       _allData = json.decode(response.body);
       categoryCount = countStatusValues(_allData!);
     } else {
-      // Handle error
+      throw Exception('Fetching error /event');
     }
 
     _isLoading = false;
@@ -146,6 +149,35 @@ class AnmeldeProvider with ChangeNotifier {
     return counts;
   }
 
+  /// Basic API route data
+
+  List<dynamic> _modules = [];
+  List<dynamic> _genders = [];
+  List<dynamic> _eatingHabits = [];
+
+  List<dynamic> get modules => _modules;
+  List<dynamic> get genders => _genders;
+  List<dynamic> get eatingHabits => _eatingHabits;
+
+  void initModules(List<dynamic> modules) {
+    _convertNestedStringDateToDateTime(modules);
+    _modules = modules;
+    notifyListeners();
+  }
+
+  void initGenders(List<dynamic> genders) {
+    _convertNestedStringDateToDateTime(genders);
+    _genders = genders;
+    notifyListeners();
+  }
+
+  void initEatingHabits(List<dynamic> eatingHabits) {
+    _convertNestedStringDateToDateTime(eatingHabits);
+    _eatingHabits = eatingHabits;
+    notifyListeners();
+  }
+
+
   /// General Functions
 
   void clearData() {
@@ -153,4 +185,47 @@ class AnmeldeProvider with ChangeNotifier {
     _savedPersons = [];
     _pageData = {};
   }
+
+  String getInputLabelForDropdownValue(String? value) {
+    switch (value) {
+      case "1":
+        return "Welcher Bahnhof?";
+      case "2":
+        return "Welche Reisegesellschaft?";
+      case "3":
+        return "Anzahl der PKW";
+      case "4":
+        return "Wie reist du an?";
+      default:
+        return "Details";
+    }
+  }
+
+  final List<dynamic> _anreiseData = [
+    {"id": 1, "name": "Öffis"},
+    {"id": 2, "name": "Reisebus"},
+    {"id": 3, "name": "PKW"},
+    {"id": 4, "name": "Sonstiges"}
+  ];
+
+  List<dynamic> get anreiseData => _anreiseData;
+
+
+  /// Testing utils
+  // TODO remove testing block from project
+  String _testId = "";
+
+  String get testId => _testId;
+
+  String _generateRandomString(int length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random();
+
+    return String.fromCharCodes(Iterable.generate(length, (_) => characters.codeUnitAt(random.nextInt(characters.length))));
+  }
+
+  void initTestId() {
+    _testId = _generateRandomString(32);
+  }
+
 }

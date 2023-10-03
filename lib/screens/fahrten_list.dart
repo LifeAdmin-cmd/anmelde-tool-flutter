@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 class FahrtenList extends StatefulWidget {
   final String category;
   final String title;
-  const FahrtenList({super.key, required this.category, required this.title});
+  final bool forceUpdate;
+  const FahrtenList({super.key, required this.category, required this.title, this.forceUpdate = false});
 
   @override
   State<FahrtenList> createState() => _FahrtenListState();
@@ -43,7 +44,7 @@ class _FahrtenListState extends State<FahrtenList> {
     setNullText();
 
     Future.microtask(
-        () => Provider.of<AnmeldeProvider>(context, listen: false).fetchData());
+        () => Provider.of<AnmeldeProvider>(context, listen: false).fetchData(forceUpdate: widget.forceUpdate));
   }
 
   // function to fetch data
@@ -81,6 +82,8 @@ class _FahrtenListState extends State<FahrtenList> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AnmeldeProvider>(context);
+
+    if (provider.testId.isEmpty) provider.initTestId();
 
     // Guard clauses for null values
     if (provider.categoryCount == null || provider.allData == null) {

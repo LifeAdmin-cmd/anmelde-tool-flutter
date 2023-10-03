@@ -18,89 +18,111 @@ class FahrtenAnmeldung extends StatefulWidget {
 }
 
 class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
-  List<dynamic> modules = [];
-  List<dynamic> genders = [];
-  List<dynamic> eatingHabits = [];
   List<Map<String, dynamic>> fetchedPersons = [];
   Map<String, dynamic> loadedAnmeldung = {};
   late bool isLoading;
 
   Future<void> fetchData() async {
+    final anmeldeProvider = Provider.of<AnmeldeProvider>(
+        context, listen: false);
+
     isLoading = true;
 
-    final List<http.Response> responses = await Future.wait([
-      http.get(Uri.parse('https://api.larskra.eu/modules')),
-      http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
-      http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
-      http.get(Uri.parse('https://api.larskra.eu/persons')),
-      http.get(Uri.parse('https://api.larskra.eu/fahrten/${widget.fahrtenId}/anmeldung'))
-    ]);
+    try {
+      final List<http.Response> responses = await Future.wait([
+        http.get(Uri.parse('https://test-api.larskra.eu/modules')),
+        http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
+        http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
+        http.get(Uri.parse('https://api.larskra.eu/persons')),
+        http.get(Uri.parse(
+            'https://test-api.larskra.eu/api/event/register/${anmeldeProvider
+                .testId}')),
+      ]);
 
-    // Check if all responses have status code 200
-    final allResponsesSuccessful = responses.every((response) =>
-    response.statusCode == 200);
+      // Check if all responses have status code 200
+      final allResponsesSuccessful = responses.every((response) =>
+      response.statusCode == 200);
 
-    if (allResponsesSuccessful) {
-      setState(() {
-        modules = json.decode(utf8.decode(responses[0].bodyBytes));
-        genders = json.decode(utf8.decode(responses[1].bodyBytes));
-        eatingHabits = json.decode(utf8.decode(responses[2].bodyBytes));
-        var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
-        fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
-        loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
+      // TODO API Routes changed for uxd testing
+      if (allResponsesSuccessful) {
+        setState(() {
+          anmeldeProvider.initModules(
+              json.decode(utf8.decode(responses[0].bodyBytes)));
+          anmeldeProvider.initGenders(
+              json.decode(utf8.decode(responses[1].bodyBytes)));
+          anmeldeProvider.initEatingHabits(
+              json.decode(utf8.decode(responses[2].bodyBytes)));
 
-        /// clean data before using model again
-        final anmeldeProvider = Provider.of<AnmeldeProvider>(
-            context, listen: false);
-        anmeldeProvider.clearData();
+          /// disabled usage of fetched persons for uxd test
+          var responsePersons = json.decode(utf8.decode(responses[3].bodyBytes));
+          fetchedPersons = responsePersons is List ? responsePersons.cast<Map<String, dynamic>>() : [];
+          loadedAnmeldung = json.decode(utf8.decode(responses[4].bodyBytes));
 
-        if (loadedAnmeldung.isNotEmpty) {
-          loadedAnmeldung['pageData'] = (loadedAnmeldung['pageData'] as Map<String, dynamic>).map<int, dynamic>(
-                  (key, value) => MapEntry(int.parse(key), value)
-          );
+          /// clean data before using model again
+          anmeldeProvider.clearData();
 
-          final int personenIndex =
-          modules.indexWhere((obj) => obj["title"] == "Personen");
+          if (loadedAnmeldung.isNotEmpty) {
+            loadedAnmeldung['pageData'] =
+                (loadedAnmeldung['pageData'] as Map<String, dynamic>).map<
+                    int,
+                    dynamic>(
+                        (key, value) => MapEntry(int.parse(key), value)
+                );
 
-          bool isSubset(Map subset, Map superset) {
-            for (final key in subset.keys) {
-              if (!superset.containsKey(key)) {
-                return false;
-              }
+            final int personenIndex =
+            anmeldeProvider.modules.indexWhere((obj) =>
+            obj["title"] == "Personen");
 
-              if (subset[key] is List && superset[key] is List) {
-                if (!(const ListEquality().equals(
-                    subset[key], superset[key]))) {
+            bool isSubset(Map subset, Map superset) {
+              for (final key in subset.keys) {
+                if (!superset.containsKey(key)) {
                   return false;
                 }
-              } else if (subset[key] != superset[key]) {
-                return false;
+
+                if (subset[key] is List && superset[key] is List) {
+                  if (!(const ListEquality().equals(
+                      subset[key], superset[key]))) {
+                    return false;
+                  }
+                } else if (subset[key] != superset[key]) {
+                  return false;
+                }
               }
+              return true;
             }
-            return true;
+
+            final loadedPersons = (loadedAnmeldung['pageData'][personenIndex]['persons'] as List)
+                .cast<Map<String, dynamic>>();
+            fetchedPersons.removeWhere((person) =>
+                loadedPersons.any((loadedPerson) =>
+                    isSubset(person, loadedPerson)));
+
+            anmeldeProvider.initPageDate(loadedAnmeldung['pageData']);
+            for (var person in loadedPersons) {
+              anmeldeProvider.addRegisteredPerson(person);
+            }
           }
 
-          final loadedPersons = (loadedAnmeldung['pageData'][personenIndex]['persons'] as List)
-              .cast<Map<String, dynamic>>();
-          fetchedPersons.removeWhere((person) =>
-              loadedPersons.any((loadedPerson) =>
-                  isSubset(person, loadedPerson)));
-
-          anmeldeProvider.initPageDate(loadedAnmeldung['pageData']);
-          for (var person in loadedPersons) {
-            anmeldeProvider.addRegisteredPerson(person);
+          for (var person in fetchedPersons) {
+            anmeldeProvider.addSavedPerson(person);
           }
-        }
-
-        for (var person in fetchedPersons) {
-          anmeldeProvider.addSavedPerson(person);
-        }
-      });
+        });
+        isLoading = false;
+      } else {
+        // TODO: Handle the error or show an error screen
+        isLoading = false;
+        throw Exception('Fetching error at registration init');
+      }
+    } catch (error) {
       isLoading = false;
-    } else {
-      // TODO: Handle the error or show an error screen
-      isLoading = false;
-      throw Exception('Failed to load data from one or more APIs');
+      // Display a Snackbar with the error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Da ist etwas schief gelaufen, versuche es bitte erneut oder kontaktiere einen Administrator: \n\nFehler: ${error.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      Navigator.pop(context);
     }
   }
 
@@ -116,10 +138,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
       appBar: const DPVAppBar(title: 'Anmeldung'),
       body: isLoading ? const Loading() : Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Card(
-          color: Colors.grey[200],
-          child: FormWidget(modules: modules, genders: genders, eatingHabits: eatingHabits, fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
-        ),
+        child: FormWidget(fetchedPersons: fetchedPersons, bookingOptions: widget.bookingOptions, fahrtenId: widget.fahrtenId),
       ),
     );
   }

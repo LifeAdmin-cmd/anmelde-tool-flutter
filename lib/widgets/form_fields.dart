@@ -2,7 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
+import '../models/anmelde_provider.dart';
 
 class BuchstabenInput extends StatefulWidget {
   final String labelText;
@@ -32,13 +35,16 @@ class _BuchstabenInputState extends State<BuchstabenInput> {
       child: FormBuilderTextField(
         name: widget.idName,
         decoration: InputDecoration(
-          labelText: widget.labelText + (widget.required ? "*" : "" ),
+          labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
             return 'Dieses Feld darf nicht leer sein.';
           }
-          if (value != null && value.isNotEmpty && !RegExp(widget.regex).hasMatch(value)) {
+          if (value != null &&
+              value.isNotEmpty &&
+              !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
           return null;
@@ -70,15 +76,17 @@ class _InputSwitchState extends State<InputSwitch> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0,),
+      padding: const EdgeInsets.all(
+        12.0,
+      ),
       child: FormBuilderSwitch(
         name: widget.idName,
-        title: Text(widget.labelText + (widget.required ? "*" : "" )),
+        title: Text(widget.labelText + (widget.required ? "*" : "")),
         // TODO overwrites the saving of the state
         initialValue: widget.initialValue,
         validator: (value) {
           // TODO when dynamic initialValue is implemented this needs to be changed
-          if(widget.required && (value == null || !value)) {
+          if (widget.required && (value == null || !value)) {
             return "Diese Option ist erforderlich um fortzufahren";
           }
           return null;
@@ -101,7 +109,7 @@ class DateTimeInput extends StatefulWidget {
     required this.idName,
     this.required = true,
     this.inputType = InputType.date,
-    this.formatString = "yyyy-MM-dd",
+    this.formatString = "dd.MM.yyyy",
   });
 
   @override
@@ -112,17 +120,22 @@ class _DateTimeInputState extends State<DateTimeInput> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0,),
+      padding: const EdgeInsets.all(
+        12.0,
+      ),
       child: FormBuilderDateTimePicker(
         name: widget.idName,
         inputType: widget.inputType,
+        initialEntryMode: DatePickerEntryMode.input,
         format: DateFormat(widget.formatString),
+        locale: const Locale('de', 'DE'),
         decoration: InputDecoration(
-          labelText: widget.labelText + (widget.required ? "*" : "" ),
+          labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           // TODO when dynamic initialValue is implemented this needs to be changed
-          if(widget.required && value == null) {
+          if (widget.required && value == null) {
             return "Dieses Feld darf nicht leer sein.";
           }
           return null;
@@ -138,6 +151,7 @@ class DropdownInput extends StatefulWidget {
   final bool required;
   final String placeholder;
   final List<dynamic> data;
+  final String? initialValue;
   final Function(String?)? onChanged;
 
   const DropdownInput({
@@ -147,6 +161,7 @@ class DropdownInput extends StatefulWidget {
     required this.data,
     this.required = true,
     this.placeholder = "Bitte wählen ...",
+    this.initialValue,
     this.onChanged,
   }) : super(key: key);
 
@@ -155,6 +170,15 @@ class DropdownInput extends StatefulWidget {
 }
 
 class _DropdownInputState extends State<DropdownInput> {
+  String? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue =
+        widget.initialValue; // Initialize _selectedValue with initialValue
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -163,19 +187,20 @@ class _DropdownInputState extends State<DropdownInput> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.labelText + (widget.required ? "*" : "" ),
+            widget.labelText + (widget.required ? "*" : ""),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
           FormBuilderDropdown<String>(
             name: widget.idName,
-            items: widget.data
-                .map<DropdownMenuItem<String>>((dynamic value) {
+            items: widget.data.map<DropdownMenuItem<String>>((dynamic value) {
               final Map<String, dynamic> item = value as Map<String, dynamic>;
               return DropdownMenuItem<String>(
-                value: item['id'].toString(), // Assuming 'value' is a string or can be converted to one
-                child: Text(item['name'].toString()), // Assuming 'name' is a string or can be converted to one
+                value: item['id']
+                    .toString(), // Assuming 'value' is a string or can be converted to one
+                child: Text(item['name']
+                    .toString()), // Assuming 'name' is a string or can be converted to one
               );
             }).toList(),
             decoration: InputDecoration(
@@ -189,6 +214,7 @@ class _DropdownInputState extends State<DropdownInput> {
               return null;
             },
             onChanged: widget.onChanged,
+            initialValue: _selectedValue,
           ),
         ],
       ),
@@ -225,7 +251,7 @@ class _ChoiceInputState extends State<ChoiceInput> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.labelText + (widget.required ? "*" : "" ),
+            widget.labelText + (widget.required ? "*" : ""),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -234,12 +260,14 @@ class _ChoiceInputState extends State<ChoiceInput> {
             name: widget.idName,
             // checkmarkColor: Colors.green,
             selectedColor: Colors.green[400],
-            options: widget.data
-                .map<FormBuilderChipOption<String>>((dynamic value) {
+            options:
+                widget.data.map<FormBuilderChipOption<String>>((dynamic value) {
               final Map<String, dynamic> item = value as Map<String, dynamic>;
               return FormBuilderChipOption<String>(
-                value: item['id'].toString(), // Assuming 'value' is a string or can be converted to one
-                child: Text(item['name'].toString()), // Assuming 'name' is a string or can be converted to one
+                value: item['id']
+                    .toString(), // Assuming 'value' is a string or can be converted to one
+                child: Text(item['name']
+                    .toString()), // Assuming 'name' is a string or can be converted to one
               );
             }).toList(),
             decoration: InputDecoration(
@@ -286,9 +314,11 @@ class _IntegerInputState extends State<IntegerInput> {
       padding: const EdgeInsets.all(12.0),
       child: FormBuilderTextField(
         name: widget.idName,
-        keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+        keyboardType:
+            const TextInputType.numberWithOptions(decimal: false, signed: true),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
@@ -331,17 +361,17 @@ class _FloatInputState extends State<FloatInput> {
       padding: const EdgeInsets.all(12.0),
       child: FormBuilderTextField(
         name: widget.idName,
-        keyboardType: const TextInputType.numberWithOptions(
-            decimal: true, signed: true),
+        keyboardType:
+            const TextInputType.numberWithOptions(decimal: true, signed: true),
         decoration: InputDecoration(
           labelText: widget.labelText + (widget.required ? "*" : ""),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if ((value == null || value.isEmpty) && widget.required) {
             return 'Dieses Feld darf nicht leer sein.';
           }
-          if (value != null &&
-              !RegExp(widget.regex).hasMatch(value)) {
+          if (value != null && !RegExp(widget.regex).hasMatch(value)) {
             return widget.regexError;
           }
           return null;
@@ -396,32 +426,19 @@ class TravelAttribute extends StatefulWidget {
   final String idName;
   final String labelText;
 
-  const TravelAttribute({super.key, required this.initialTravelType, required this.idName, required this.labelText});
+  const TravelAttribute(
+      {super.key,
+      required this.initialTravelType,
+      required this.idName,
+      required this.labelText});
 
   @override
   State<TravelAttribute> createState() => _TravelAttributeState();
 }
 
 class _TravelAttributeState extends State<TravelAttribute> {
-  String? _currentSelection; // 1. Add variable to hold current value from the dropdown
-  List<dynamic> data = [
-    {
-      "id": 1,
-      "name": "Öffis"
-    },
-    {
-      "id": 2,
-      "name": "Reisebus"
-    },
-    {
-      "id": 3,
-      "name": "PKW"
-    },
-    {
-      "id": 4,
-      "name": "Sonstiges"
-    }
-  ];
+  String?
+      _currentSelection; // 1. Add variable to hold current value from the dropdown
 
   @override
   void initState() {
@@ -432,47 +449,43 @@ class _TravelAttributeState extends State<TravelAttribute> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final anmeldeProvider =
+        Provider.of<AnmeldeProvider>(context, listen: false);
     return Column(
       children: [
-        const IntegerInput(labelText: "Anzahl Personen?", idName: "personCount"),
+        const IntegerInput(
+            labelText: "Anzahl Personen?", idName: "personCount"),
         DropdownInput(
           labelText: widget.labelText,
-          idName: widget.idName,
-          data: data,
-          // 2. Add a listener for when the DropdownInput changes
+          idName: "travelType",
+          data: anmeldeProvider.anreiseData,
+          initialValue: _currentSelection,
           onChanged: (newValue) {
             setState(() {
               _currentSelection = newValue;
             });
           },
         ),
-        const DateTimeInput(labelText: "Datum und Uhrzeit", idName: "travelDateTime", inputType: InputType.both, formatString: 'yyyy-MM-dd HH:mm'),
+        const DateTimeInput(
+            labelText: "Datum und Uhrzeit",
+            idName: "travelDateTime",
+            inputType: InputType.both,
+            formatString: 'yyyy-MM-dd HH:mm'),
         _currentSelection == "3"
-        ? IntegerInput(labelText: _getInputLabelForDropdownValue(_currentSelection), idName: "reiseDetails")
-        : BuchstabenInput(
-          labelText: _getInputLabelForDropdownValue(_currentSelection),
-          idName: "reiseDetails",
-        ),
+            ? IntegerInput(
+                labelText: anmeldeProvider
+                    .getInputLabelForDropdownValue(_currentSelection),
+                idName: "reiseDetails")
+            : BuchstabenInput(
+                labelText: anmeldeProvider
+                    .getInputLabelForDropdownValue(_currentSelection),
+                idName: "reiseDetails",
+                regex: r"",
+              ),
       ],
     );
-  }
-
-  String _getInputLabelForDropdownValue(String? value) {
-    switch (value) {
-      case "1":
-        return "Welcher Bahnhof?";
-      case "2":
-        return "Welche Reisegesellschaft?";
-      case "3":
-        return "Anzahl der PKW";
-      case "4":
-        return "Wie reist du an?";
-      default:
-        return "Details";
-    }
   }
 }
 
@@ -484,7 +497,14 @@ class FahrtenConditionsInput extends StatefulWidget {
   final bool initialValue;
   final bool required;
 
-  const FahrtenConditionsInput({super.key, required this.labelText, this.urlString = "", required this.idName, this.introText = "", this.initialValue = false, this.required = true});
+  const FahrtenConditionsInput(
+      {super.key,
+      required this.labelText,
+      this.urlString = "",
+      required this.idName,
+      this.introText = "",
+      this.initialValue = false,
+      this.required = true});
 
   @override
   State<FahrtenConditionsInput> createState() => _FahrtenConditionsInputState();
@@ -504,6 +524,7 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
               style: const TextStyle(color: Colors.black),
             ),
           ),
+          const SizedBox(height: 8.0,),
           Visibility(
             visible: widget.urlString.isNotEmpty,
             child: RichText(
@@ -514,7 +535,8 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
                     style: const TextStyle(color: Colors.blue),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () async {
-                        const url = 'http://stammgalaxias.de/wp-content/uploads/2022/11/fahrtenbedinungen.pdf';
+                        const url =
+                            'http://stammgalaxias.de/wp-content/uploads/2022/11/fahrtenbedinungen.pdf';
                         if (await canLaunchUrlString(url)) {
                           await launchUrlString(url);
                         } else {
@@ -526,10 +548,181 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
               ),
             ),
           ),
-          InputSwitch(labelText: widget.labelText, idName: widget.idName, initialValue: widget.initialValue, required: widget.required,),
+          InputSwitch(
+            labelText: widget.labelText,
+            idName: widget.idName,
+            initialValue: widget.initialValue,
+            required: widget.required,
+          ),
         ],
       ),
     );
   }
 }
 
+class SummaryCard extends StatelessWidget {
+  final Map<int, dynamic> pageData;
+  final List<dynamic> modules;
+  final List<Map<String, dynamic>> persons;
+
+  const SummaryCard(
+      {super.key,
+      required this.pageData,
+      required this.modules,
+      required this.persons});
+
+  @override
+  Widget build(BuildContext context) {
+    final anmeldeProvider =
+        Provider.of<AnmeldeProvider>(context, listen: false);
+    return Card(
+      elevation: 4.0,
+      margin: const EdgeInsets.all(16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _buildCardContent(anmeldeProvider),
+        ),
+      ),
+    );
+  }
+
+  bool isModuleDataEmpty(Map<String, dynamic> moduleData) {
+    if (moduleData == null) return true;
+    for (var value in moduleData.values) {
+      if (value != null && value.toString().isNotEmpty) return false;
+    }
+    return true;
+  }
+
+  List<Widget> _buildCardContent(provider) {
+    List<Widget> contentWidgets = [];
+
+    for (var i = 0; i < modules.length; i++) {
+      var module = modules[i];
+      var moduleData = pageData[i];
+
+      if (isModuleDataEmpty(moduleData) && module['title'] != "Personen") {
+        continue; // Skip this iteration if the module data is empty
+      }
+
+      if (module['title'] == "Personen") {
+        contentWidgets.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Personen",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+            ...persons
+                .map((person) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const SizedBox(height: 8.0),
+                        Text(
+                            "Name: ${person["firstName"]} ${person["lastName"]}"),
+                        Text("Fahrtenname: ${person["scoutName"] ?? ""}"),
+                        Text("Geschlecht: ${person["gender"]}"),
+                        Text(
+                            "Geburtstag: ${DateFormat('dd.MM.yyyy').format(person["birthday"])}"),
+                        Text("Addresse: ${person["address"]}"),
+                        Text("PLZ: ${person["plz"]}"),
+                        Text("Buchungsoption: ${person["bookingOption"] ?? ""}"),
+                        Text(
+                            "Essensbesonderheiten: ${(person["eatingHabits"]?.join(', ')) ?? "-"}"),
+                        const SizedBox(height: 16.0),
+                      ],
+                    ))
+                .toList(),
+          ],
+        ));
+      } else if (module['title'] == "Zusammenfassung") {
+        continue;
+      } else if (moduleData != null) {
+        if (module["title"].isNotEmpty) {
+          contentWidgets.add(
+            Text(
+              module["title"],
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            ),
+          );
+          contentWidgets.add(const SizedBox(height: 8.0));
+        }
+
+        // Process form fields
+        for (var field in module["formFields"]) {
+          var id = field["id"];
+          var label = field["label"];
+          var type = field["type"];
+          var value = moduleData[id];
+
+          switch (type) {
+            case "booleanAttribute":
+              contentWidgets.add(Row(
+                children: <Widget>[
+                  Icon(value ? Icons.check_box : Icons.check_box_outline_blank),
+                  const SizedBox(width: 8.0),
+                  Expanded(child: Text(label)),
+                ],
+              ));
+              break;
+            case "stringAttribute":
+            case "integerAttribute":
+            case "floatAttribute":
+            case "textAttribute":
+              if (value != null && value.isNotEmpty) {
+                contentWidgets.add(Text('$label: $value'));
+              }
+              break;
+            case "dateTimeAttribute":
+              if (value != null) {
+                DateTime? dt = DateTime.tryParse(value);
+                String formattedDate = dt != null
+                    ? DateFormat('yyyy-MM-dd').format(dt)
+                    : "Invalid date";
+                contentWidgets.add(Text('$label: $formattedDate'));
+              }
+              break;
+            case "travelAttribute":
+              contentWidgets.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Anzahl Personen: ${moduleData['personCount']}"),
+                  Text("Reiseart: ${provider.anreiseData.firstWhere((element) => element["id"] == int.parse(moduleData['travelType']), orElse: () => null)['name']}"),
+                  Text("Zeitpunkt: ${DateFormat('dd.MM.yyy HH:mm').format(moduleData['travelDateTime'])}"),
+                  Text("${provider.getInputLabelForDropdownValue(moduleData['travelType'])}: ${moduleData['reiseDetails']}"),
+                ],
+              ));
+              break;
+            case "conditionsAttribute":
+              contentWidgets.add(Row(
+                children: <Widget>[
+                  Icon(value ? Icons.check_box : Icons.check_box_outline_blank),
+                  const SizedBox(width: 8.0),
+                  Expanded(child: Text(label)),
+                ],
+              ));
+              break;
+            case "summaryAttribute":
+              // You might not want to display summary in the summary card itself,
+              // since it could be recursive or redundant
+              break;
+            default:
+              print('Unknown attribute type: $type');
+              break;
+          }
+          contentWidgets
+              .add(const SizedBox(height: 8.0)); // space between items
+        }
+
+        contentWidgets
+            .add(const SizedBox(height: 16.0)); // space between sections
+      }
+    }
+
+    return contentWidgets;
+  }
+}

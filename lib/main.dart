@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:galaxias_anmeldetool/screens/fahrten_list.dart';
 import 'package:galaxias_anmeldetool/models/anmelde_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const Main());
@@ -12,7 +13,6 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ChangeNotifierProvider(
       create: (context) => AnmeldeProvider(),
       child: MaterialApp(
@@ -21,6 +21,14 @@ class Main extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(32, 86, 223, 1)),
           useMaterial3: true,
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('de', 'DE'),
+        ],
         // home: const Home(title: 'DPV Anmelde-Tool'),
         routes: {
           '/': (context) => const FahrtenList(category: 'pending', title: 'Aktive Anmeldephase'),
