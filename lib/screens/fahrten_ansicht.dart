@@ -66,7 +66,7 @@ class CustomProgressBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Start\n${DateFormat("d. MMM").format(startDate)}",
+            Text("Start\n${DateFormat("d. MMM", 'de_DE').format(startDate)}",
                 style: const TextStyle(
                   fontSize: 12.0,
                 )),
@@ -93,7 +93,7 @@ class CustomProgressBar extends StatelessWidget {
                     ),
                   ),
             Text(
-              "Ende\n${DateFormat("d. MMM").format(endDate)}",
+              "Ende\n${DateFormat("d. MMM", 'de_DE').format(endDate)}",
               style: const TextStyle(
                 fontSize: 12.0,
               ),
@@ -226,7 +226,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const Text("Start:"),
-                                          Text(DateFormat("d. MMM").format(eventStart))
+                                          Text(DateFormat("d. MMM", 'de_DE').format(eventStart))
                                         ],
                                       )
                                     ],
@@ -239,7 +239,7 @@ class _FahrtenAnsichtState extends State<FahrtenAnsicht> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const Text("Ende:"),
-                                          Text(DateFormat("d. MMM").format(eventEnd))
+                                          Text(DateFormat("d. MMM", 'de_DE').format(eventEnd))
                                         ],
                                       )
                                     ],
