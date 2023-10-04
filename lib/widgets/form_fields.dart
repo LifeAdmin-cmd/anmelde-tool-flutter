@@ -472,7 +472,8 @@ class _TravelAttributeState extends State<TravelAttribute> {
             labelText: "Datum und Uhrzeit",
             idName: "travelDateTime",
             inputType: InputType.both,
-            formatString: 'yyyy-MM-dd HH:mm'),
+            formatString: 'dd.MM.yyyy - HH:mm'
+        ),
         _currentSelection == "3"
             ? IntegerInput(
                 labelText: anmeldeProvider
