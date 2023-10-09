@@ -30,7 +30,7 @@ class _FahrtenAnmeldungState extends State<FahrtenAnmeldung> {
 
     try {
       final List<http.Response> responses = await Future.wait([
-        http.get(Uri.parse('https://test-api.larskra.eu/modules')),
+        http.get(Uri.parse('https://api.larskra.eu/modules')),
         http.get(Uri.parse('https://api.bundesapp.org/basic/gender/')),
         http.get(Uri.parse('https://api.bundesapp.org/basic/eat-habits/')),
         http.get(Uri.parse('https://api.larskra.eu/persons')),

@@ -562,20 +562,20 @@ class _FahrtenConditionsInputState extends State<FahrtenConditionsInput> {
 }
 
 class SummaryCard extends StatelessWidget {
-  final Map<int, dynamic> pageData;
-  final List<dynamic> modules;
-  final List<Map<String, dynamic>> persons;
+  final Map<int, dynamic>? pageData; // nullable
+  final List<dynamic>? modules; // nullable
+  final List<Map<String, dynamic>>? persons; // nullable
 
   const SummaryCard(
       {super.key,
-      required this.pageData,
-      required this.modules,
-      required this.persons});
+        required this.pageData,
+        required this.modules,
+        required this.persons});
 
   @override
   Widget build(BuildContext context) {
     final anmeldeProvider =
-        Provider.of<AnmeldeProvider>(context, listen: false);
+    Provider.of<AnmeldeProvider>(context, listen: false);
     return Card(
       elevation: 4.0,
       margin: const EdgeInsets.all(16.0),
@@ -592,7 +592,7 @@ class SummaryCard extends StatelessWidget {
     );
   }
 
-  bool isModuleDataEmpty(Map<String, dynamic> moduleData) {
+  bool isModuleDataEmpty(Map<String, dynamic>? moduleData) { // nullable parameter
     if (moduleData == null) return true;
     for (var value in moduleData.values) {
       if (value != null && value.toString().isNotEmpty) return false;
@@ -603,12 +603,12 @@ class SummaryCard extends StatelessWidget {
   List<Widget> _buildCardContent(provider) {
     List<Widget> contentWidgets = [];
 
-    for (var i = 0; i < modules.length; i++) {
-      var module = modules[i];
-      var moduleData = pageData[i];
+    for (var i = 0; i < (modules?.length ?? 0); i++) { // null check for length
+      var module = modules?[i];
+      var moduleData = pageData?[i];
 
-      if (isModuleDataEmpty(moduleData) && module['title'] != "Personen") {
-        continue; // Skip this iteration if the module data is empty
+      if (module == null || (isModuleDataEmpty(moduleData) && module['title'] != "Personen")) {
+        continue; // Skip this iteration if the module data is empty or module is null
       }
 
       if (module['title'] == "Personen") {
@@ -617,44 +617,44 @@ class SummaryCard extends StatelessWidget {
           children: [
             const Text("Personen",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
-            ...persons
+            ...(persons ?? [])  // null check for persons
                 .map((person) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const SizedBox(height: 8.0),
-                        Text(
-                            "Name: ${person["firstName"]} ${person["lastName"]}"),
-                        Text("Fahrtenname: ${person["scoutName"] ?? ""}"),
-                        Text("Geschlecht: ${person["gender"]}"),
-                        Text(
-                            "Geburtstag: ${DateFormat('dd.MM.yyyy').format(person["birthday"])}"),
-                        Text("Addresse: ${person["address"]}"),
-                        Text("PLZ: ${person["plz"]}"),
-                        Text("Buchungsoption: ${person["bookingOption"] ?? ""}"),
-                        Text(
-                            "Essensbesonderheiten: ${(person["eatingHabits"]?.join(', ')) ?? "-"}"),
-                        const SizedBox(height: 16.0),
-                      ],
-                    ))
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 8.0),
+                Text(
+                    "Name: ${person["firstName"] ?? "Unknown"} ${person["lastName"] ?? "Unknown"}"),
+                Text("Fahrtenname: ${person["scoutName"] ?? ""}"),
+                Text("Geschlecht: ${person["gender"] ?? "Unknown"}"),
+                Text(
+                    "Geburtstag: ${person["birthday"] != null ? DateFormat('dd.MM.yyyy').format(person["birthday"]) : "Unknown Date"}"),
+                Text("Addresse: ${person["address"] ?? "Unknown"}"),
+                Text("PLZ: ${person["plz"] ?? "Unknown"}"),
+                Text("Buchungsoption: ${person["bookingOption"] ?? "Unknown"}"),
+                Text(
+                    "Essensbesonderheiten: ${(person["eatingHabits"]?.join(', ')) ?? "-"}"),
+                const SizedBox(height: 16.0),
+              ],
+            ))
                 .toList(),
           ],
         ));
       } else if (module['title'] == "Zusammenfassung") {
         continue;
       } else if (moduleData != null) {
-        if (module["title"].isNotEmpty) {
+        if ((module["title"]?.isNotEmpty ?? false)) { // null check for module["title"]
           contentWidgets.add(
             Text(
               module["title"],
               style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
           );
           contentWidgets.add(const SizedBox(height: 8.0));
         }
 
         // Process form fields
-        for (var field in module["formFields"]) {
+        for (var field in (module["formFields"] ?? [])) { // null check for module["formFields"]
           var id = field["id"];
           var label = field["label"];
           var type = field["type"];
@@ -723,7 +723,6 @@ class SummaryCard extends StatelessWidget {
             .add(const SizedBox(height: 16.0)); // space between sections
       }
     }
-
     return contentWidgets;
   }
 }
